@@ -1,0 +1,141 @@
+.custom-border-col-right{
+    border-right: 2px solid #ff8800;
+}
+.custom-border-col{
+    border: 2px solid #ff8800;
+    padding: 10px;
+}
+.time-active-children-one-level{
+    background-color: #f0db73bd !important;
+}
+.time-active-children-two-level{
+    background-color: #78eb8b !important;
+}
+.hidden{
+    display:none;
+}
+.border-payment{
+    border-radius: 40px;
+}
+#button-payment{
+    margin: 10px;
+}
+.sort-dropdown-menu{
+        
+    padding-left:10px;
+    padding-right:10px;
+}
+#dropdownMenuButton1{
+    margin: 10px;
+}
+.ratings{
+    margin-right:100px;
+}
+
+.ratings i{
+    
+    color:#cecece;
+    font-size:15px;
+}
+
+.rating-color{
+    color:#fbc634 !important;
+}
+
+.review-count{
+    font-weight:400;
+    margin-bottom:2px;
+    font-size:24px !important;
+}
+
+.small-ratings i{
+color:#cecece;   
+}
+
+.review-stat{
+    font-weight:300;
+    font-size:18px;
+    margin-bottom:2px;
+}
+.filter{
+    border-radius: 30px;
+    padding: 20px;
+}
+.cart-custom{
+    border-radius: 30px;
+    padding: 20px;
+    margin-left: 0.2%;
+    margin-right: 0.2%;
+}
+.cart-custom:hover{
+    border: 1px solid #0685c3;
+
+}
+.button-sale-custom{
+    padding: 5px;
+    width: 100%;
+    color: white !important;
+    margin-top: 15px;
+}
+.button-show-custom{
+    margin-left:20px;
+    background: #002a3a !important;
+    color: white !important;
+    padding: 5px;
+    width: 100%
+}
+
+@media screen and (min-width: 769px) {
+    .border-left{
+        /* top-left | top-right | bottom-right | bottom-left */
+        border-radius: 20px 0 0 20px !important;
+    }
+    .border-right{
+        /* top-left | top-right | bottom-right | bottom-left */
+        border-radius: 0 20px 20px 0 !important;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .button-show-custom{
+        margin:20px;
+    }
+}
+
+.accordion-preview .collapse:not(.show) {
+    display: block;
+}
+.accordion-preview .collapse:not(.show) .accordion-body {
+    max-height: 90px;
+    position: relative;
+    overflow: hidden;
+    padding: 0px !important;
+}
+
+.accordion-preview .collapse:not(.show) .accordion-body:after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    content: "";
+    background: linear-gradient(to top,
+    rgba(255,255,255, 1) 5%, 
+    rgba(255,255,255, 0) 60%
+    );
+    pointer-events: none; /* so the text is still selectable */
+    padding: 0px !important;
+}
+.no-border{
+    border: none !important;
+}
+option{
+    margin:5px !important;
+    font-size: 20px !important;
+}
+.form-check-input{
+margin-left:5px !important;
+}
+.form-check-label{
+margin-left:5px !important;
+}
