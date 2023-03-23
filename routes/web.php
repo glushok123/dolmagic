@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::get('/', 'App\Http\Controllers\StatisticsOrderController@show')->name('statistics');
 Route::get('/statistics', 'App\Http\Controllers\StatisticsOrderController@show')->name('statistics');
 Route::post('/get-info-statics-order', 'App\Http\Controllers\StatisticsOrderController@getInfoStaticsOrder')->name('getInfoStaticsOrder');
 Route::post('/get-info-statics-product', 'App\Http\Controllers\StatisticsOrderController@getInfoStaticsProduct')->name('getInfoStaticsProduct');
