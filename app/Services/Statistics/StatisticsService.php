@@ -23,6 +23,11 @@ class StatisticsService extends BaseModelService
     public $arrayCollectionBtDate = [];
     public $arrayCollectionByDatePreparations = [];
 
+    public $checkedSp = true;
+    public $checkedSelfPurchase = true;
+    public $checkedStatusCancel = true;
+    public $article;
+
     /**
      * @see BaseModelService
      */
@@ -45,7 +50,18 @@ class StatisticsService extends BaseModelService
      * 
      * @return void
      */
-    public function setProperties(string $interval, $shopId, string $unit, ?string $dateStartSales, ?string $dateEndSales, string $type): void
+    public function setProperties(
+        string $interval, 
+        $shopId, 
+        string $unit, 
+        ?string $dateStartSales, 
+        ?string $dateEndSales, 
+        string $type,
+        string $checkedSp,
+        string $checkedSelfPurchase,
+        string $checkedStatusCancel,
+        ?string $article
+    ): void
     {
         $this->interval = $interval;
         $this->shopId = $shopId;
@@ -53,14 +69,28 @@ class StatisticsService extends BaseModelService
         $this->dateStartSales = $dateStartSales;
         $this->dateEndSales = $dateEndSales;
         $this->type = $type;
+        $this->article = $article;
 
+        if($checkedSp == 'false') {
+            $this->checkedSp = false;
+        }
+        if($checkedSelfPurchase == 'false') {
+            $this->checkedSelfPurchase = false;
+        }
+        if($checkedStatusCancel == 'false') {
+            $this->checkedStatusCancel = false;
+        }
         $this->repository->setProperties(
             $this->interval, 
             $this->shopId, 
             $this->unit, 
             $this->dateStartSales, 
             $this->dateEndSales,
-            $this->type
+            $this->type,
+            $this->checkedSp,
+            $this->checkedSelfPurchase,
+            $this->checkedStatusCancel,
+            $this->article
         );
 
         $this->repository->initBuilderOrder();

@@ -28,6 +28,13 @@
                 <option selected value="count">шт</option>
             </select>
         </div>
+
+        <div class='col'>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="products-article-product" placeholder="name@example.com">
+                <label for="floatingInput">Артикул товара</label>
+              </div>
+        </div>
     </div>
     <br>
     <hr>

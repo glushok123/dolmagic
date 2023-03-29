@@ -47,7 +47,32 @@ class StatisticsOrderController extends Controller
 
         $responseArray = [];
 
+        foreach ($request->shopId as $item) {
+            $service = StatisticsService::getInstance();
+            $service->setProperties(
+                $request->step, 
+                $item, 
+                $request->unit, 
+                $request->dateStartSales, 
+                $request->dateEndSales,
+                $request->type,
+                $request->checkedSp,
+                $request->checkedSelfPurchase,
+                $request->checkedStatusCancel,
+                $request->article,
+            );
+
+            if ($item != 'all') {
+                $itemName = DB::table('orders_type_shops')->where('id', $item)->first()->name;
+                $responseArray[$itemName] = $service->getInfoStaticsOrder();
+                continue;
+            }
+
+            $responseArray[$item] = $service->getInfoStaticsOrder();
+        }
+
         if($request->union == 'true') {
+            $service = StatisticsService::getInstance();
             $service->setUnionTrue();
             $service->setProperties(
                 $request->step, 
@@ -55,29 +80,13 @@ class StatisticsOrderController extends Controller
                 $request->unit, 
                 $request->dateStartSales, 
                 $request->dateEndSales,
-                $request->type
+                $request->type,
+                $request->checkedSp,
+                $request->checkedSelfPurchase,
+                $request->checkedStatusCancel,
+                $request->article,
             );
             $responseArray['объединенная'] = $service->getInfoStaticsOrder();
-        }else{
-            foreach ($request->shopId as $item) {
-                $service = StatisticsService::getInstance();
-                $service->setProperties(
-                    $request->step, 
-                    $item, 
-                    $request->unit, 
-                    $request->dateStartSales, 
-                    $request->dateEndSales,
-                    $request->type
-                );
-
-                if ($item != 'all') {
-                    $itemName = DB::table('orders_type_shops')->where('id', $item)->first()->name;
-                    $responseArray[$itemName] = $service->getInfoStaticsOrder();
-                    continue;
-                }
-
-                $responseArray[$item] = $service->getInfoStaticsOrder();
-            }
         }
 
         return response()->json([
@@ -101,36 +110,39 @@ class StatisticsOrderController extends Controller
 
         $responseArray = [];
 
+        foreach ($request->warehousesId as $item) {
+            $service = StatisticsProductsService::getInstance();
+
+            $service->setProperties(
+                $request->step, 
+                $item, 
+                $request->unit, 
+                $request->dateStart, 
+                $request->dateEnd,
+                $request->article,
+            );
+
+            if ($item != 'all') {
+                $itemName = DB::table('warehouses')->where('id', $item)->first()->name;
+                $responseArray[$itemName] = $service->getInfoStaticsProducts();
+                continue;
+            }
+
+            $responseArray[$item] = $service->getInfoStaticsProducts();
+        }
+
         if($request->union == 'true') {
+            $service = StatisticsProductsService::getInstance();
             $service->setUnionTrue();
             $service->setProperties(
                 $request->step, 
                 $request->warehousesId, 
                 $request->unit, 
                 $request->dateStart, 
-                $request->dateEnd
+                $request->dateEnd,
+                $request->article,
             );
             $responseArray['объединенная'] = $service->getInfoStaticsProducts();
-        }else{
-            foreach ($request->warehousesId as $item) {
-                $service = StatisticsProductsService::getInstance();
-
-                $service->setProperties(
-                    $request->step, 
-                    $item, 
-                    $request->unit, 
-                    $request->dateStart, 
-                    $request->dateEnd
-                );
-
-                if ($item != 'all') {
-                    $itemName = DB::table('warehouses')->where('id', $item)->first()->name;
-                    $responseArray[$itemName] = $service->getInfoStaticsProducts();
-                    continue;
-                }
-
-                $responseArray[$item] = $service->getInfoStaticsProducts();
-            }
         }
 
         return response()->json([

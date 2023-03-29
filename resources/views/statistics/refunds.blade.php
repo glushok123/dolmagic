@@ -31,6 +31,13 @@
                 <option value="count">шт</option>
             </select>
         </div>
+
+        <div class='col'>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="refunds-article-product" placeholder="name@example.com">
+                <label for="floatingInput">Артикул товара</label>
+              </div>
+        </div>
     </div>
     <br>
     <hr>
@@ -39,9 +46,27 @@
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDiagramma-refunds" checked>
                 <label class="form-check-label" for="flexCheckCheckedDiagramma">
-                        Линейная
+                    Линейная
                 </label>
-              </div>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="refunds-CheckedSp" checked>
+                <label class="form-check-label" for="refunds-CheckedSp">
+                    Исключить Сп
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="refunds-CheckedSelfPurchase" checked>
+                <label class="form-check-label" for="refunds-CheckedSelfPurchase">
+                    Исключить самовыкуп
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="refunds-CheckedStatusCancel" checked>
+                <label class="form-check-label" for="refunds-CheckedStatusCancel">
+                    Исключить Статус "Отмена"
+                </label>
+            </div>
         </div>
         <div class='col bg-info date-custom'>
             <label for="disabledSelect" class="form-label fw-bolder">Дата начальная</label>

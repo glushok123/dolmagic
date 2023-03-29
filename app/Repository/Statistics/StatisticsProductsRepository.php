@@ -17,14 +17,16 @@ class StatisticsProductsRepository extends BaseModelRepository
     public $dateEnd = ''; //дата окончания продаж
     public $union = false; //объединение
     public $builder = ''; //Builder
+    public $article;
 
-    public function setProperties(string $interval, $warehousesId, string $unit, ?string $dateStart, ?string $dateEnd): void
+    public function setProperties(string $interval, $warehousesId, string $unit, ?string $dateStart, ?string $dateEnd, ?string $article): void
     {
         $this->interval = $interval;
         $this->warehousesId = $warehousesId;
         $this->unit = $unit;
         $this->dateStart = $dateStart;
         $this->dateEnd = $dateEnd;
+        $this->article = $article;
     }
 
     public function setUnionTrue() 
@@ -49,6 +51,7 @@ class StatisticsProductsRepository extends BaseModelRepository
         $this->addWhereBuilder();
         $this->addOrderByBuilder();
         $this->addLimitBuilder();
+        $this->addJoinBuilderOrder();
     }
 
     /**
@@ -67,6 +70,7 @@ class StatisticsProductsRepository extends BaseModelRepository
                 'warehouses_stocks.reserved', 
                 'warehouses_stocks.save_date', 
                 'warehouses_stocks.arriving', 
+                'products.sku',
             );
     }
 
@@ -77,6 +81,11 @@ class StatisticsProductsRepository extends BaseModelRepository
      */
     public function addWhereBuilder(): void
     {
+        if($this->article != null) {
+            $this->builder = $this->builder
+                ->where('products.sku', $this->article);
+        }
+
         if ($this->union == true) {
             $this->builder = $this->builder
                 ->whereIn('warehouses_stocks.warehouse_id', $this->warehousesId);
@@ -122,5 +131,17 @@ class StatisticsProductsRepository extends BaseModelRepository
     {
         $this->builder = $this->builder
             ->limit(100000);
+    }
+
+    /**
+     * Добавление таблиц
+     * 
+     * @return void
+     */
+    public function addJoinBuilderOrder(): void
+    {
+        $this->builder = $this->builder
+            ->leftJoin('products', 'warehouses_stocks.product_id', '=', 'products.id');
+
     }
 }

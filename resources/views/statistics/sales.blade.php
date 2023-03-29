@@ -31,6 +31,12 @@
                 <option value="count">шт</option>
             </select>
         </div>
+        <div class='col'>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="sales-article-product" placeholder="name@example.com" value="">
+                <label for="floatingInput">Артикул товара</label>
+              </div>
+        </div>
     </div>
     <br>
     <hr>
@@ -39,9 +45,27 @@
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDiagramma" checked>
                 <label class="form-check-label" for="flexCheckCheckedDiagramma">
-                        Линейная
+                    Линейная
                 </label>
-              </div>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="sales-CheckedSp" checked>
+                <label class="form-check-label" for="flexCheckCheckedDiagramma">
+                    Исключить Сп
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="sales-CheckedSelfPurchase" checked>
+                <label class="form-check-label" for="flexCheckCheckedDiagramma">
+                        Исключить самовыкуп
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="sales-CheckedStatusCancel" checked>
+                <label class="form-check-label" for="flexCheckCheckedDiagramma">
+                        Исключить Статус "Отмена"
+                </label>
+            </div>
         </div>
         <div class='col bg-info date-custom'>
             <label for="disabledSelect" class="form-label fw-bolder">Дата начальная</label>

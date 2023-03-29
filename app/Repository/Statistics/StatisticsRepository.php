@@ -20,6 +20,10 @@ class StatisticsRepository extends BaseModelRepository
     public $union = false; //объединение
     public $type = 'sales'; //тип
     public $builder = ''; //Builder
+    public $checkedSp = true;
+    public $checkedSelfPurchase = true;
+    public $checkedStatusCancel = true;
+    public $article;
 
     /**
      * Установка параметров
@@ -32,7 +36,18 @@ class StatisticsRepository extends BaseModelRepository
      * 
      * @return void
      */
-    public function setProperties(string $interval, $shopId, string $unit, ?string $dateStartSales, ?string $dateEndSales, string $type): void
+    public function setProperties(
+        string $interval, 
+        $shopId, 
+        string $unit, 
+        ?string $dateStartSales, 
+        ?string $dateEndSales, 
+        string $type,
+        bool $checkedSp,
+        bool $checkedSelfPurchase,
+        bool $checkedStatusCancel,
+        ?string $article
+    ): void
     {
         $this->interval = $interval;
         $this->shopId = $shopId;
@@ -40,6 +55,10 @@ class StatisticsRepository extends BaseModelRepository
         $this->dateStartSales = $dateStartSales;
         $this->dateEndSales = $dateEndSales;
         $this->type = $type;
+        $this->checkedSp = $checkedSp;
+        $this->checkedSelfPurchase = $checkedSelfPurchase;
+        $this->checkedStatusCancel = $checkedStatusCancel;
+        $this->article = $article;
     }
 
     public function setUnionTrue() : void
@@ -85,6 +104,7 @@ class StatisticsRepository extends BaseModelRepository
                 'sales_products.product_quantity',
                 'sales_products.commission_value',
                 'sales_products.status_id',
+                'products.sku',
             );
     }
 
@@ -95,19 +115,39 @@ class StatisticsRepository extends BaseModelRepository
      */
     public function addWhereBuilderOrder(): void
     {
+        if($this->article != null) {
+            $this->builder = $this->builder
+                ->where('products.sku', $this->article);
+        }
+        if ($this->checkedSp == true) {
+            $this->builder = $this->builder
+                ->where('sales.sp_sale', '<>', 1);
+        }
+
+        if ($this->checkedSelfPurchase == true) {
+            $this->builder = $this->builder
+                ->where('sales.self_redemption', '<>', 1);
+        }
+
         $this->builder = $this->builder
-            ->where('sales.self_redemption', '<>', 1)
-            ->where('sales.sp_sale', '<>', 1)
+            //->where('sales.self_redemption', '<>', 1)
+            //->where('sales.sp_sale', '<>', 1)
             ->where('sales.state', '>', -1);
 
         if ($this->type == 'sales') {
-            $this->builder = $this->builder
-                ->where('sales_products.status_id', '<>', 3)
-                ->where('sales_products.status_id', '<>', 4)
-                ->where('sales_products.status_id', '<>', 5)
-                ->where('sales_products.status_id', '<>', 6)
-                ->where('sales_products.status_id', '<>', 9)
-                ->where('sales_products.status_id', '<>', 10);
+            if ($this->unit != 'mrg'){
+                if ($this->checkedStatusCancel == true) {
+                    $this->builder = $this->builder
+                        ->where('sales_products.status_id', '<>', 3);//Отмена
+                }
+
+                $this->builder = $this->builder
+                    ->where('sales_products.status_id', '<>', 4)//Возврат
+                    ->where('sales_products.status_id', '<>', 5)//Возврат в пути
+                    ->where('sales_products.status_id', '<>', 6)//Отмена озон (для FBO)
+                    ->where('sales_products.status_id', '<>', 9)//Возврат после получения
+                    ->where('sales_products.status_id', '<>', 10);//Возврат в пути после получения
+            }
         }
 
         if ($this->type == 'refunds') {
@@ -171,6 +211,7 @@ class StatisticsRepository extends BaseModelRepository
     {
         $this->builder = $this->builder
         ->leftJoin('sales_products', 'sales.id', '=', 'sales_products.sale_id')
+        ->leftJoin('products', 'sales_products.product_id', '=', 'products.id')
         ->leftJoin('orders_type_shops', 'sales.type_shop_id', '=', 'orders_type_shops.id');
     }
 }

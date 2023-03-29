@@ -19,6 +19,9 @@ var countProducts = 1;
 
 var activeLink = 'sales';
 
+var spiner = '<div class="container"><div class="row text-center justify-content-center" style="margin-top:20px;"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div></div>';
+
+
 /**
  * Получение информации с сервера (дата и значение)
  */
@@ -30,6 +33,7 @@ function getInfoStaticsOrders(union=false, type) {
     });
 
     if (type == 'sales') {
+        $( "#" + idBlockCurent).html(spiner);
         var url = '/get-info-statics-order';
         data = {
             step: $('#step-interval').val(),
@@ -38,12 +42,17 @@ function getInfoStaticsOrders(union=false, type) {
             dateStartSales: $('#date-start-sales').val(),
             dateEndSales: $('#date-end-sales').val(),
             union: union,
-            type: 'sales'
+            type: 'sales',
+            checkedSp: $('#sales-CheckedSp').is(':checked'),
+            checkedSelfPurchase: $('#sales-CheckedSelfPurchase').is(':checked'),
+            checkedStatusCancel: $('#sales-CheckedStatusCancel').is(':checked'),
+            article: $('#sales-article-product').val(),
         };
     };
 
     if (type == 'refunds')
     {
+        $( "#" + idBlockCurentRefunds).html(spiner);
         var url = '/get-info-statics-order';
         data = {
             step: $('#step-interval-refunds').val(),
@@ -52,12 +61,17 @@ function getInfoStaticsOrders(union=false, type) {
             dateStartSales: $('#date-start-refunds').val(),
             dateEndSales: $('#date-end-refunds').val(),
             union: union,
-            type: 'refunds'
+            type: 'refunds',
+            checkedSp: $('#refunds-CheckedSp').is(':checked'),
+            checkedSelfPurchase: $('#refunds-CheckedSelfPurchase').is(':checked'),
+            checkedStatusCancel: $('#refunds-CheckedStatusCancel').is(':checked'),
+            article: $('#refunds-article-product').val(),
         };
     }
 
     if (type == 'products')
     {
+        $( "#" + idBlockCurentProducts).html(spiner)
         var url = '/get-info-statics-product';
         data = {
             step: $('#step-interval-products').val(),
@@ -65,18 +79,48 @@ function getInfoStaticsOrders(union=false, type) {
             unit: $('#count-products').val(),
             dateStart: $('#date-start-products').val(),
             dateEnd: $('#date-end-products').val(),
-            union: union
+            union: union,
+            article: $('#products-article-product').val(),
         };
     }
-
+    
     $.ajax({
         url: url,
         method: 'post',
         dataType: "json",
         data: data,
-        async:false,
+        async:true,
         success: function(data) {
             setDataInfoArray(data.data)
+            if (type == 'sales') {
+                makeid('sales');
+                $( "#" + idBlockParent).remove();
+                if ($('#flexCheckCheckedDiagramma').is(':checked')) {
+                  diagramaLine(idBlockCurent);
+                  return;
+                }
+                diagramaColumn(idBlockCurent);
+            }
+            if (type == 'refunds'){
+                makeid('refunds');
+                $( "#" + idBlockParentRefunds).remove();
+                if ($('#flexCheckCheckedDiagramma-refunds').is(':checked')) {
+                  diagramaLine(idBlockCurentRefunds);
+                  return;
+                }
+                diagramaColumn(idBlockCurentRefunds);
+            }
+            if (type == 'products') {
+                makeid('products');
+                $( "#" + idBlockParentProducts).remove();
+            
+                if ($('#flexCheckCheckedDiagramma-products').is(':checked')) {
+                  diagramaLine(idBlockCurentProducts);
+                  return;
+                }
+            
+                diagramaColumn(idBlockCurentProducts);
+            }
         },
         error: function (jqXHR, exception) {
             if (jqXHR.status === 0) {
@@ -570,13 +614,6 @@ function makeid(type) {
  */
 function changefilterOrders(union=false) {
     getInfoStaticsOrders(union, 'sales');
-    makeid('sales');
-    $( "#" + idBlockParent).remove();
-    if ($('#flexCheckCheckedDiagramma').is(':checked')) {
-      diagramaLine(idBlockCurent);
-      return;
-    }
-    diagramaColumn(idBlockCurent);
 }
 
 /**
@@ -586,13 +623,6 @@ function changefilterOrders(union=false) {
  */
 function changefilterOrdersRefunds(union=false) {
     getInfoStaticsOrders(union, 'refunds');
-    makeid('refunds');
-    $( "#" + idBlockParentRefunds).remove();
-    if ($('#flexCheckCheckedDiagramma-refunds').is(':checked')) {
-      diagramaLine(idBlockCurentRefunds);
-      return;
-    }
-    diagramaColumn(idBlockCurentRefunds);
 }
 
 /**
@@ -601,15 +631,6 @@ function changefilterOrdersRefunds(union=false) {
  */
 function changefilterOrdersProducts(union=false) {
     getInfoStaticsOrders(union, 'products');
-    makeid('products');
-    $( "#" + idBlockParentProducts).remove();
-
-    if ($('#flexCheckCheckedDiagramma-products').is(':checked')) {
-      diagramaLine(idBlockCurentProducts);
-      return;
-    }
-
-    diagramaColumn(idBlockCurentProducts);
 }
 
 $(document).on('click', '#get-grafics', function(){ changefilterOrders() });

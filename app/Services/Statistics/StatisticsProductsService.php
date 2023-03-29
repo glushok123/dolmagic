@@ -20,6 +20,7 @@ class StatisticsProductsService extends BaseModelService
 
     public $arrayCollectionByDate = [];
     public $arrayCollectionByDatePreparations = [];
+    public $article;
 
     /**
      * @see BaseModelService
@@ -43,19 +44,22 @@ class StatisticsProductsService extends BaseModelService
      * 
      * @return void
      */
-    public function setProperties(string $interval, $warehousesId, string $unit, ?string $dateStart, ?string $dateEnd): void
+    public function setProperties(string $interval, $warehousesId, string $unit, ?string $dateStart, ?string $dateEnd, ?string $article): void
     {
         $this->interval = $interval;
         $this->warehousesId = $warehousesId;
         $this->unit = $unit;
         $this->dateStart = $dateStart;
         $this->dateEnd = $dateEnd;
+        $this->article = $article;
+
         $this->repository->setProperties(
             $this->interval, 
             $this->warehousesId, 
             $this->unit, 
             $this->dateStart, 
-            $this->dateEnd
+            $this->dateEnd,
+            $this->article
         );
         $this->repository->initBuilder();
     }
