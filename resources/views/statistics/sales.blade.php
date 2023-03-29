@@ -49,19 +49,19 @@
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="sales-CheckedSp" checked>
+                <input class="form-check-input" type="checkbox" value="" id="sales-CheckedSp" >
                 <label class="form-check-label" for="flexCheckCheckedDiagramma">
                     Исключить Сп
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="sales-CheckedSelfPurchase" checked>
+                <input class="form-check-input" type="checkbox" value="" id="sales-CheckedSelfPurchase" >
                 <label class="form-check-label" for="flexCheckCheckedDiagramma">
                         Исключить самовыкуп
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="sales-CheckedStatusCancel" checked>
+                <input class="form-check-input" type="checkbox" value="" id="sales-CheckedStatusCancel" >
                 <label class="form-check-label" for="flexCheckCheckedDiagramma">
                         Исключить Статус "Отмена"
                 </label>

@@ -50,19 +50,19 @@
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="refunds-CheckedSp" checked>
+                <input class="form-check-input" type="checkbox" value="" id="refunds-CheckedSp" >
                 <label class="form-check-label" for="refunds-CheckedSp">
                     Исключить Сп
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="refunds-CheckedSelfPurchase" checked>
+                <input class="form-check-input" type="checkbox" value="" id="refunds-CheckedSelfPurchase" >
                 <label class="form-check-label" for="refunds-CheckedSelfPurchase">
                     Исключить самовыкуп
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="refunds-CheckedStatusCancel" checked>
+                <input class="form-check-input" type="checkbox" value="" id="refunds-CheckedStatusCancel" >
                 <label class="form-check-label" for="refunds-CheckedStatusCancel">
                     Исключить Статус "Отмена"
                 </label>
