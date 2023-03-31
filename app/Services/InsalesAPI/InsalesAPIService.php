@@ -47,9 +47,9 @@ class InsalesAPIService extends BaseModelService
         return (int) $countProducts;
     }
 
-    public function getInfoProductsByInsales(): array
+    public function getInfoProductsByInsales(int $numberPageCurrent): array
     {
-        $infoProducts = Http::acceptJson()->withBasicAuth($this->login, $this->password)->get($this->host . 'products.json');
+        $infoProducts = Http::acceptJson()->withBasicAuth($this->login, $this->password)->get($this->host . 'products.json?per_page=250&page=' . $numberPageCurrent);
         return (array) $infoProducts->json();
     }
 
@@ -59,6 +59,9 @@ class InsalesAPIService extends BaseModelService
         return (array) $infoProduct->json();
     }
 
+    /**
+     * Информация о всех товарах
+     */
     public function getInfoProductsByMysql()
     {
        $arrayIdWarehouses = $this->getIdWarehousesByInsales();
@@ -77,7 +80,6 @@ class InsalesAPIService extends BaseModelService
             )
             ->where('products.archive', 0)
             ->where('type_shop_products.type_shop_id', 3)
-            //->where('products.id', 2)
             ->whereIn('warehouses_stocks.warehouse_id', $arrayIdWarehouses)
             ->leftJoin('type_shop_products', 'products.id', '=', 'type_shop_products.product_id')
             ->leftJoin('shop_prices', 'products.id', '=', 'shop_prices.product_id')
@@ -88,21 +90,95 @@ class InsalesAPIService extends BaseModelService
         return  $infoProducts;
     }
 
+    /**
+     * Информация о товаре по SKU
+     * 
+     * @param string $sku
+     */
+    public function getInfoProductByMysql(string $sku)
+    {
+        $infoProducts = DB::table('products')
+            ->select(
+                'products.id',
+                'products.sku',
+                'shop_prices.price as pricePriority1',
+                'shop_prices.old_price as oldPricePriority1',
+                'products.temp_price as pricePriority2',
+                'products.temp_old_price as oldPricePriority2',
+                'type_shop_products.shop_product_id as idInsales',
+            )
+            ->where('products.archive', 0)
+            ->where('type_shop_products.type_shop_id', 3)
+            ->where('products.sku', $sku)
+            ->leftJoin('type_shop_products', 'products.id', '=', 'type_shop_products.product_id')
+            ->leftJoin('shop_prices', 'products.id', '=', 'shop_prices.product_id')
+            ->first();
+
+        return  $infoProducts;
+    }
+
+    /**
+     * Количество товара
+     * 
+     * @param int $productId
+     * 
+     * @return int
+     */
+    public function getQuantityProduct(int $productId): int
+    {
+        $obj1 = DB::table('warehouses_stocks')->where('warehouse_id', 1)->where('product_id', $productId)->orderBy('save_date', 'DESC')->first();
+        $obj2 = DB::table('warehouses_stocks')->where('warehouse_id', 2)->where('product_id', $productId)->orderBy('save_date', 'DESC')->first();
+
+        if ($obj1 == null) {
+            $available1 = 0;
+            $reserved1 = 0;
+        }
+        else{
+            $available1 = $obj1->available;
+            $reserved1 = $obj1->reserved;
+        }
+
+        if ($obj2 == null) {
+            $available2 = 0;
+            $reserved2 = 0;
+        }
+        else{
+            $available2 = $obj2->available;
+            $reserved2 = $obj2->reserved;
+        }
+
+        return ($available1 + $available2) - ($reserved1 + $reserved2);
+    }
+
     public function getIdWarehousesByInsales(): array
     {
         return (array) DB::table('type_shop_warehouses')->where('type_shop_id', 3)->pluck('warehouse_id')->toArray();
     }
 
-    public function updateVariantProduct($idProduct, $idVariant, $infoProduct)
+
+    /**
+     * Обновление варианта 
+     * 
+     * @param int $idProduct
+     * @param int $idVariant
+     * @param array $infoProduct
+     * 
+     * @return void
+     */
+    public function updateVariantProduct(int $idProduct, int $idVariant, array $infoProduct): void
     {
         $response = Http::acceptJson()
             ->withBasicAuth($this->login, $this->password)
             ->put($this->host . 'products/' . $idProduct . '/variants/' . $idVariant .'.json', [
-                'variant' => [
-                    'quantity' => 0
-                ],
-    
+                'variant' => $infoProduct
             ]);
+    }
+
+    public function deleteVariantProduct(int $idProduct, int $idVariant): void
+    {
+        $response = Http::acceptJson()
+            ->withBasicAuth($this->login, $this->password)
+            ->delete($this->host . 'products/' . $idProduct . '/variants/' . $idVariant .'.json');
     }
 
     public function createVariantProduct($idProduct, $idVariant, $infoProduct, $productInfo)
@@ -133,7 +209,32 @@ class InsalesAPIService extends BaseModelService
                 ],
     
             ]);
-        
-        dd($response->json());
+            //TO DO ...
+    }
+
+    /**
+     * Информация о всех товарах
+     */
+    public function getProductsNeedToAdd(array $sku)
+    {
+        $infoProducts = DB::table('products')
+            ->select(
+                'products.id',
+                'products.sku',
+                'shop_prices.price as pricePriority1',
+                'shop_prices.old_price as oldPricePriority1',
+                'products.temp_price as pricePriority2',
+                'products.temp_old_price as oldPricePriority2',
+                'type_shop_products.shop_product_id as idInsales',
+
+            )
+            ->where('products.archive', 0)
+            ->where('type_shop_products.type_shop_id', 3)
+            ->whereNotIn('products.sku', $sku)
+            ->leftJoin('type_shop_products', 'products.id', '=', 'type_shop_products.product_id')
+            ->leftJoin('shop_prices', 'products.id', '=', 'shop_prices.product_id')
+            ->get();
+
+        return  $infoProducts;
     }
 }

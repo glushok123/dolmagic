@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('history_insales_a_p_i_s', function (Blueprint $table) {
+        Schema::connection('tech')->create('history_insales_a_p_i_s', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });

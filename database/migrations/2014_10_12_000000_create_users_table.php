@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::connection('tech')->create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('logo')->index()->nullable()->comment('Путь до логотипа');
-            $table->string('rating')->index()->nullable()->comment('Рейтинг');
-            $table->string('count_order')->index()->nullable()->comment('количество заказов');
             $table->string('email')->unique();
-            $table->unsignedTinyInteger('type')->default(0)->comment('Тип пользователя покупатель/продавец');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
