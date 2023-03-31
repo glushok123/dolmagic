@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Services\InsalesAPI\InsalesAPIService;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use DB;
 
 class InsalesAPI extends Command
 {
@@ -29,22 +31,23 @@ class InsalesAPI extends Command
     public $arrayIdProductsByRemove = [];
     public $arrayIdVariantsByRemove = [];
 
-    public function getInfoProducts()
+    /**
+     * Получение товаров с Insales
+     * 
+     * @return void
+     */
+    public function getInfoProducts(): void
     {
         $service = InsalesAPIService::getInstance();
 
-        $this->info('Старт получения информации о товарах');
-        Log::info('Старт получения информации о товарах');
+        $this->printLog('Старт получения информации о товарах');
 
         $countProductsByInsales = $service->getCountProductsByInsales();
         $countPage = ceil($countProductsByInsales/250);
 
-        $this->info('Количество товара на площадке: ' . $countProductsByInsales);
-        $this->info('Количество страниц: ' . $countPage);
+        $this->printLog('Количество товара на площадке: ' . $countProductsByInsales);
+        $this->printLog('Количество страниц: ' . $countPage);
 
-        Log::info('Количество товара на площадке: ' . $countProductsByInsales);
-        Log::info('Количество страниц: ' . $countPage);
-        
         $countProductsBySeveralVariants = 0;
         $countProductsVariantsWithoutQuantity = 0;
 
@@ -106,16 +109,23 @@ class InsalesAPI extends Command
         }
         $progressBar->finish();
 
-        $this->info('Количество товаров у которых несколько вариантов: ' . $countProductsBySeveralVariants);
-        $this->info('Количество вариантов у которых отстутствует количество: ' . $countProductsVariantsWithoutQuantity);
-        $this->info('Количество товаров которые дублируются: ' . count($this->arrayIdVariantsByRemove));
-
-        Log::info('Количество товаров у которых несколько вариантов: ' . $countProductsBySeveralVariants);
-        Log::info('Количество вариантов у которых отстутствует количество: ' . $countProductsVariantsWithoutQuantity);
-        Log::info('Количество товаров которые дублируются: ' . count($this->arrayIdVariantsByRemove));
-
+        $this->printLog('Количество товаров у которых несколько вариантов: ' . $countProductsBySeveralVariants);
+        $this->printLog('Количество вариантов у которых отстутствует количество: ' . $countProductsVariantsWithoutQuantity);
+        $this->printLog('Количество товаров которые дублируются: ' . count($this->arrayIdVariantsByRemove));
     }
 
+    /**
+     * Сохранение лога и вывод сообщения в консоль
+     * 
+     * @param string $message
+     * 
+     * @return void
+     */
+    public function printLog(string $message): void
+    {
+        $this->info($message);
+        Log::info($message);
+    }
     /**
      * Execute the console command.
      *
@@ -127,19 +137,16 @@ class InsalesAPI extends Command
         $service = InsalesAPIService::getInstance();
 
         $this->info('Старт синхронизации');
-        Log::info('Старт синхронизации');
         $this->getInfoProducts();
-
-        $countProductsByInsales = count($this->obj);
-        $progressBar = $this->output->createProgressBar($countProductsByInsales);
-        $progressBar->start();
-
         $countProductUpdate = 0;
+
+        $progressBar = $this->output->createProgressBar(count($this->obj));
+        $progressBar->start();
 
         foreach($this->obj as $productInsales) {
             foreach($productInsales['variants'] as $variant) {
                 $productMysql = $service->getInfoProductByMysql($variant['sku']);
-                if ($productMysql == null) {
+                if ($productMysql == null) { // если товара нет в БД, то убираем колличество
                     if ($variant['quantity'] != 0) {
                         $variantUpdateInfo = [
                             "quantity" => 0
@@ -150,7 +157,7 @@ class InsalesAPI extends Command
                     }
                 }
 
-                if ($productMysql != null) {
+                if ($productMysql != null) { //Если товар есть в БД
                     $price = $productMysql->pricePriority1 == null ? $productMysql->pricePriority2 : $productMysql->pricePriority1;
                     $old_price = $productMysql->oldPricePriority1 == null ? $productMysql->oldPricePriority2 : $productMysql->oldPricePriority1;
                     $quantity =  $service->getQuantityProduct($productMysql->id);
@@ -159,7 +166,7 @@ class InsalesAPI extends Command
                         $quantity = 0;
                     }
 
-                    if ($price != $variant['price'] || $old_price != $variant['old_price'] || $quantity != $variant['quantity']) {
+                    if ($price != $variant['price'] || $old_price != $variant['old_price'] || $quantity != $variant['quantity']) { // Проверяем разницу, если есть, то обновляем кол и цену
                         $variantUpdateInfo = [
                             "price" => $price,
                             "old_price" => $old_price,
@@ -167,6 +174,24 @@ class InsalesAPI extends Command
                         ];
     
                         $service->updateVariantProduct($productInsales['product_id_insales'], $variant['id'], $variantUpdateInfo);
+
+                        DB::connection('tech')->table('history_insales_a_p_i_s')->insert([
+                            'product_id_insales' => $productInsales['product_id_insales'],
+                            'variants_id' => $variant['id'],
+                            'sku' => $variant['sku'],
+
+                            'current_price' => $price,
+                            'current_old_price' => $old_price,
+                            'current_quantity' => $quantity,
+
+                            'past_price' => $variant['price'],
+                            'past_old_price' => $variant['old_price'],
+                            'past_quantity' => $variant['quantity'],
+
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ]);
+
                         $countProductUpdate += 1;
                     }
                 }
@@ -176,24 +201,30 @@ class InsalesAPI extends Command
         }
 
         $progressBar->finish();
-        $this->info('Количество вариантов которые были обновлены: ' . $countProductUpdate);
-        Log::info('Количество вариантов которые были обновлены: ' . $countProductUpdate);
 
-        foreach ($this->arrayIdVariantsByRemove as $key => $value) {
-            $service->deleteVariantProduct($key, $value['variants_id']);
+        $this->printLog('Количество вариантов которые были обновлены: ' . $countProductUpdate);
+
+        foreach ($this->arrayIdVariantsByRemove as $key => $value) { // удаляем дубликаты
+            foreach ($value as $variant) {
+                $service->deleteVariantProduct($key, $variant['variants_id']);
+            }
         }
 
-        $this->info('Количество вариантов которые были удалены: ' . count($this->arrayIdVariantsByRemove));
-        Log::info('Количество вариантов которые были удалены: ' . count($this->arrayIdVariantsByRemove));
-
+        $this->printLog('Количество вариантов которые были удалены: ' . count($this->arrayIdVariantsByRemove));
 
         $productNeedToAdd = $service->getProductsNeedToAdd($this->arraySku);
 
-        $this->info('Количество товаров которые нужно добавить: ' . $productNeedToAdd->count());
-        Log::info('Количество товаров которые нужно добавить: ' . $productNeedToAdd->count());
+        $this->printLog('Количество товаров которые нужно добавить: ' . $productNeedToAdd->count());
 
-        $this->info('Конец синхронизации');
-        Log::info('Конец синхронизации');
+        foreach ($productNeedToAdd as $product) {
+            /*
+                TO DO
+
+                Добавление товара на площадку Insales
+            */
+        }
+
+        $this->printLog('Конец синхронизации');
 
         return Command::SUCCESS;
     }

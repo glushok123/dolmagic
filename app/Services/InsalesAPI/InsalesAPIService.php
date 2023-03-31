@@ -111,7 +111,10 @@ class InsalesAPIService extends BaseModelService
             ->where('type_shop_products.type_shop_id', 3)
             ->where('products.sku', $sku)
             ->leftJoin('type_shop_products', 'products.id', '=', 'type_shop_products.product_id')
-            ->leftJoin('shop_prices', 'products.id', '=', 'shop_prices.product_id')
+            ->leftJoin('shop_prices', function ($join) {
+                $join->on('products.id', '=', 'shop_prices.product_id')
+                    ->where('shop_prices.shop_id','=', 3);
+            })
             ->first();
 
         return  $infoProducts;
