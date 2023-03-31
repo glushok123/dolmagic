@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         Log::info('START CRON');
-       // $schedule->command('inspire')->hourly();
+        $schedule->command('insales:synchronization')->hourly();
     }
 
     /**
