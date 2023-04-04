@@ -6,11 +6,13 @@
             <tr>
                 <th>Номер</th>
                 <th>Дата продажи</th>
+                <th>Статус</th>
                 <th>Площадка</th>
             </tr>
         </thead>
         <tbody>
             <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

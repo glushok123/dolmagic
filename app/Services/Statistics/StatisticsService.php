@@ -218,6 +218,10 @@ class StatisticsService extends BaseModelService
             ->pluck('name', 'id')
             ->toArray();
 
+        $statuses = DB::table('sales_products_statuses')->select('id', 'name')
+            ->pluck('name', 'id')
+            ->toArray();
+
         $arrayUniqueIdSales = [];
 
         foreach ($this->arrayCollectionBtDate as $item) {
@@ -227,16 +231,10 @@ class StatisticsService extends BaseModelService
 
             $arrayUniqueIdSales[] = $item->id;
 
-            //$model = Sale::where('id', $item->id)->first();
-            //$mrg = $model->marginValue;
-            //$price = $model->totalSalePrice;
-            //$purchasePrice = $model->totalPurchasePrice;
-            //dd($item, $price, $purchasePrice);
-
-
             $this->arrayCollectionByDatePreparation[] = [
                 '<a class="btn btn-primary" href="https://crmdollmagic.ru/sales/edit/' . $item->id . '" target="_blank">' . $item->id . '</a>',
                 $item->date_sale,
+                $statuses[$item->status_id],
                 $shops[$item->type_shop_id],
             ];
         }
