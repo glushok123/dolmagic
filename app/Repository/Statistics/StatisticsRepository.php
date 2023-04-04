@@ -115,7 +115,7 @@ class StatisticsRepository extends BaseModelRepository
      */
     public function addWhereBuilderOrder(): void
     {
-        if($this->article != null) {
+        if ($this->article != null) {
             $this->builder = $this->builder
                 ->where('products.sku', $this->article);
         }
@@ -130,8 +130,6 @@ class StatisticsRepository extends BaseModelRepository
         }
 
         $this->builder = $this->builder
-            //->where('sales.self_redemption', '<>', 1)
-            //->where('sales.sp_sale', '<>', 1)
             ->where('sales.state', '>', -1);
 
         if ($this->type == 'sales') {

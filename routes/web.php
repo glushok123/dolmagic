@@ -17,5 +17,6 @@ Route::get('/', 'App\Http\Controllers\StatisticsOrderController@show')->name('st
 Route::get('/statistics', 'App\Http\Controllers\StatisticsOrderController@show')->name('statistics');
 Route::post('/get-info-statics-order', 'App\Http\Controllers\StatisticsOrderController@getInfoStaticsOrder')->name('getInfoStaticsOrder');
 Route::post('/get-info-statics-product', 'App\Http\Controllers\StatisticsOrderController@getInfoStaticsProduct')->name('getInfoStaticsProduct');
+Route::post('/get-info-statics-sales-by-date-for-table', 'App\Http\Controllers\StatisticsOrderController@getInfoStaticsSalesByDateForTable')->name('getInfoStaticsSalesByDateForTable');
 
 Route::get('/insales-api', 'App\Http\Controllers\InsalesAPIController@show')->name('insales-api');

@@ -7,6 +7,7 @@ use App\Services\Base\BaseModelService;
 use App\Models\Orders;
 use Carbon\Carbon;
 use App\Eloquent\Sales\Sale;
+use App\Eloquent\Order\OrdersTypeShop;
 use DB;
 
 class StatisticsService extends BaseModelService
@@ -195,6 +196,49 @@ class StatisticsService extends BaseModelService
                     'value' => $productMrg
                 ];
             }
+        }
+
+        return empty($this->arrayCollectionByDatePreparation) == true ? [] : array_reverse($this->arrayCollectionByDatePreparation);
+    }
+
+
+    /**
+     * Генерация статистики по продажам для таблицы
+     * 
+     * @return array
+     */
+    public function getInfoStaticsSalesByDateForTable(): array
+    {
+        $this->builder = $this->repository->getBuilder();
+        $this->arrayCollectionBtDate = $this->builder->get();
+
+        $shops = OrdersTypeShop::select('id', 'name')
+            ->where('filter_order', '!=', 0)
+            ->orderBy('filter_order')
+            ->pluck('name', 'id')
+            ->toArray();
+
+        $arrayUniqueIdSales = [];
+
+        foreach ($this->arrayCollectionBtDate as $item) {
+            if (in_array($item->id, $arrayUniqueIdSales) == true) {
+                continue;
+            }
+
+            $arrayUniqueIdSales[] = $item->id;
+
+            //$model = Sale::where('id', $item->id)->first();
+            //$mrg = $model->marginValue;
+            //$price = $model->totalSalePrice;
+            //$purchasePrice = $model->totalPurchasePrice;
+            //dd($item, $price, $purchasePrice);
+
+
+            $this->arrayCollectionByDatePreparation[] = [
+                '<a class="btn btn-primary" href="https://crmdollmagic.ru/sales/edit/' . $item->id . '" target="_blank">' . $item->id . '</a>',
+                $item->date_sale,
+                $shops[$item->type_shop_id],
+            ];
         }
 
         return empty($this->arrayCollectionByDatePreparation) == true ? [] : array_reverse($this->arrayCollectionByDatePreparation);

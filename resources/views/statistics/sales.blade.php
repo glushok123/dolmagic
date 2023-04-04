@@ -1,4 +1,25 @@
 <section>
+
+    <hr style="color:brown;  height: 5px;">
+    <table id="myTableSales" class="display">
+        <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Дата продажи</th>
+                <th>Площадка</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+        </tbody>
+    </table>
+    <hr style="color:brown;  height: 5px;">
+
     <div class='row'>
         <div class='col'>
             <label for="disabledSelect" class="form-label">Интервал</label>

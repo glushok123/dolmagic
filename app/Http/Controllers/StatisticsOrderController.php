@@ -150,4 +150,42 @@ class StatisticsOrderController extends Controller
             'data' => $responseArray,
         ]);
     }
+
+    /**
+     * Информация о продажах для таблицы, при клике на график
+     * 
+     * @param Request $request
+     * 
+     * @return JsonResponse
+     */
+    public function getInfoStaticsSalesByDateForTable(Request $request): JsonResponse
+    {
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', 1000);
+
+        $responseArray = [];
+
+        $service = StatisticsService::getInstance();
+        $service->setUnionTrue();
+
+        $service->setProperties(
+            $request->step, 
+            $request->shopId, 
+            $request->unit, 
+            $request->dateStartSales, 
+            $request->dateEndSales,
+            $request->type,
+            $request->checkedSp,
+            $request->checkedSelfPurchase,
+            $request->checkedStatusCancel,
+            $request->article,
+        );
+
+        $responseArray = $service->getInfoStaticsSalesByDateForTable();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $responseArray,
+        ]);
+    }
 }

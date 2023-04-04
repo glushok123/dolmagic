@@ -22,9 +22,102 @@ var activeLink = 'sales';
 var spiner = '<div class="container"><div class="row text-center justify-content-center" style="margin-top:20px;"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div></div>';
 
 
+var tableSale = new DataTable('#myTableSales', {
+    responsive: true,
+});
+
+function getFormatDate(dateObject) {
+    let d = new Date(dateObject);
+    let day = d.getDate();
+    let month = d.getMonth() + 1;
+    let year = d.getFullYear();
+
+    if (day < 10) {
+        day = "0" + day;
+    }
+
+    if (month < 10) {
+        month = "0" + month;
+    }
+
+    let date = year + "-" + month + "-" + day;
+
+    return date;
+};
+
 function getInfoByCircle(data) {
-  console.log('click')
-  console.log(data)
+    console.log('click')
+
+    let timeStampDate = data.date;
+    let myDate = getFormatDate(data.date)
+
+    data = {
+        step: $('#step-interval').val(),
+        shopId: $('#shop').val(),
+        unit: $('#count').val(),
+        dateStartSales: $('#date-start-sales').val(),
+        dateEndSales: $('#date-end-sales').val(),
+        union: false,
+        type: 'sales',
+        checkedSp: $('#sales-CheckedSp').is(':checked'),
+        checkedSelfPurchase: $('#sales-CheckedSelfPurchase').is(':checked'),
+        checkedStatusCancel: $('#sales-CheckedStatusCancel').is(':checked'),
+        article: $('#sales-article-product').val(),
+    };
+
+    if ($('#step-interval').val() == 'day') {
+        data.dateStartSales = myDate;
+        data.dateEndSales = myDate;
+    }
+
+    if ($('#step-interval').val() == 'month') {
+        let date = new Date(timeStampDate);
+        let firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+        let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        data.dateStartSales = getFormatDate(firstDay);
+        data.dateEndSales = getFormatDate(lastDay);
+    }
+
+    if ($('#step-interval').val() == 'year') {
+      let date = new Date(timeStampDate);
+      let firstDay = date.getFullYear() + "-" + 01 + "-" + 01;
+      let lastDay = date.getFullYear() + "-" + 12 + "-" + 31;
+      data.dateStartSales = firstDay;
+      data.dateEndSales = lastDay;
+    }
+
+    console.log(data)
+
+    $.ajax({
+      url: '/get-info-statics-sales-by-date-for-table',
+      method: 'post',
+      dataType: "json",
+      data: data,
+      async: true,
+      success: function(data) {
+          console.log(data)
+
+          tableSale.clear().draw();
+          tableSale.rows.add(data.data).draw();
+      },
+      error: function (jqXHR, exception) {
+         /* if (jqXHR.status === 0) {
+              alert('Not connect. Verify Network.');
+          } else if (jqXHR.status == 404) {
+              alert('Requested page not found (404).');
+          } else if (jqXHR.status == 500) {
+              alert('Internal Server Error (500).');
+          } else if (exception === 'parsererror') {
+              alert('Requested JSON parse failed.');
+          } else if (exception === 'timeout') {
+              alert('Time out error.');
+          } else if (exception === 'abort') {
+              alert('Ajax request aborted.');
+          } else {
+              alert('Uncaught Error. ' + jqXHR.responseText);
+          }*/
+      }
+  });
 }
 
 /**
