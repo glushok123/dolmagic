@@ -107,6 +107,28 @@
     <br>
     <hr>
     <div class="row">
+
+        <div class="container" id='loader-curent'>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="loader11">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <br/>
+        </div>
+
         <div id="chart-sales"></div>
         @php
             $count = 1;

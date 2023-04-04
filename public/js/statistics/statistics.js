@@ -21,7 +21,7 @@ var activeLink = 'sales';
 
 var spiner = '<div class="container"><div class="row text-center justify-content-center" style="margin-top:20px;"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div></div>';
 
-
+$('#loader-curent').hide()
 var tableSale = new DataTable('#myTableSales', {
     responsive: true,
 });
@@ -46,7 +46,7 @@ function getFormatDate(dateObject) {
 };
 
 function getInfoByCircle(data) {
-    console.log('click')
+    $('#loader-curent').show()
 
     let timeStampDate = data.date;
     let myDate = getFormatDate(data.date)
@@ -86,7 +86,7 @@ function getInfoByCircle(data) {
       data.dateEndSales = lastDay;
     }
 
-    console.log(data)
+
 
     $.ajax({
       url: '/get-info-statics-sales-by-date-for-table',
@@ -95,10 +95,9 @@ function getInfoByCircle(data) {
       data: data,
       async: true,
       success: function(data) {
-          console.log(data)
-
           tableSale.clear().draw();
           tableSale.rows.add(data.data).draw();
+          $('#loader-curent').hide()
       },
       error: function (jqXHR, exception) {
          /* if (jqXHR.status === 0) {

@@ -2,6 +2,8 @@
 
 @section('content')
 
+
+
 <div class="container" id='app-static'>
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -82,5 +84,28 @@
         .hidden{
             display:none;
         }
+        /********************  Preloader Demo-11 *******************/
+            .loader11{width:100px;height:70px;margin:50px auto;position:relative}
+            .loader11 span{display:block;width:5px;height:10px;background:#e43632;position:absolute;bottom:0;animation:loading-11 2.25s infinite ease-in-out}
+            .loader11 span:nth-child(2){left:11px;animation-delay:.2s}
+            .loader11 span:nth-child(3){left:22px;animation-delay:.4s}
+            .loader11 span:nth-child(4){left:33px;animation-delay:.6s}
+            .loader11 span:nth-child(5){left:44px;animation-delay:.8s}
+            .loader11 span:nth-child(6){left:55px;animation-delay:1s}
+            .loader11 span:nth-child(7){left:66px;animation-delay:1.2s}
+            .loader11 span:nth-child(8){left:77px;animation-delay:1.4s}
+            .loader11 span:nth-child(9){left:88px;animation-delay:1.6s}
+            @-webkit-keyframes loading-11{
+                0%{height:10px;transform:translateY(0);background:#ff4d80}
+                25%{height:60px;transform:translateY(15px);background:#3423a6}
+                50%{height:10px;transform:translateY(-10px);background:#e29013}
+                100%{height:10px;transform:translateY(0);background:#e50926}
+            }
+            @keyframes loading-11{
+                0%{height:10px;transform:translateY(0);background:#ff4d80}
+                25%{height:60px;transform:translateY(15px);background:#3423a6}
+                50%{height:10px;transform:translateY(-10px);background:#e29013}
+                100%{height:10px;transform:translateY(0);background:#e50926}
+            }
     </style>
 @endsection
