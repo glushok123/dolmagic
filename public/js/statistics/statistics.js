@@ -345,7 +345,7 @@ function diagramaLine(id) {
             
               series.bullets.push(function() {
                   var circle = am5.Circle.new(root, {
-                      radius: 4,
+                      radius: 6,
                       fill: series.get("fill"),
                       stroke: root.interfaceColors.get("background"),
                       strokeWidth: 2
