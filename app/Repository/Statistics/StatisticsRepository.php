@@ -105,6 +105,7 @@ class StatisticsRepository extends BaseModelRepository
                 'sales_products.commission_value',
                 'sales_products.status_id',
                 'products.sku',
+                'orders.system_order_id',
             );
     }
 
@@ -210,6 +211,7 @@ class StatisticsRepository extends BaseModelRepository
         $this->builder = $this->builder
         ->leftJoin('sales_products', 'sales.id', '=', 'sales_products.sale_id')
         ->leftJoin('products', 'sales_products.product_id', '=', 'products.id')
-        ->leftJoin('orders_type_shops', 'sales.type_shop_id', '=', 'orders_type_shops.id');
+        ->leftJoin('orders_type_shops', 'sales.type_shop_id', '=', 'orders_type_shops.id')
+        ->leftJoin('orders', 'sales.order_id', '=', 'orders.id');
     }
 }
