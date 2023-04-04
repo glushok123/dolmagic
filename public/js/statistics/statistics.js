@@ -22,6 +22,11 @@ var activeLink = 'sales';
 var spiner = '<div class="container"><div class="row text-center justify-content-center" style="margin-top:20px;"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div></div>';
 
 
+function getInfoByCircle(data) {
+  console.log('click')
+  console.log(data)
+}
+
 /**
  * Получение информации с сервера (дата и значение)
  */
@@ -189,21 +194,12 @@ function diagramaLine(id) {
         var value = 1000000;
         
         function generateData() {
-          value = Math.round((Math.random() * 1000 - 4.2) + value);
-          am5.time.add(date, "day", 1);
-          console.log(date.getTime().toString());
-          return {
-            date: date.getTime(),
-            value: value + 10000
-          };
-        }
-        
-        function generateDatas(count) {
-          var data = [];
-          for (var i = 0; i < count; ++i) {
-            data.push(generateData());
-          }
-          return data;
+            value = Math.round((Math.random() * 1000 - 4.2) + value);
+            am5.time.add(date, "day", 1);
+            return {
+              date: date.getTime(),
+              value: value + 10000
+            };
         }
 
         formatDateXCustom = "day";
@@ -255,18 +251,22 @@ function diagramaLine(id) {
               }));
             
               series.bullets.push(function() {
-                var circle = am5.Circle.new(root, {
-                  radius: 4,
-                  fill: series.get("fill"),
-                  stroke: root.interfaceColors.get("background"),
-                  strokeWidth: 2
-                });
-              
-                return am5.Bullet.new(root, {
-                  sprite: circle
-                });
-            });
-        
+                  var circle = am5.Circle.new(root, {
+                      radius: 4,
+                      fill: series.get("fill"),
+                      stroke: root.interfaceColors.get("background"),
+                      strokeWidth: 2
+                  });
+                
+                  circle.events.on("click", function(e) {
+                      getInfoByCircle(e.target.dataItem.dataContext)
+                      //console.log("bullet clicked", e.target.dataItem.dataContext)
+                  })
+
+                  return am5.Bullet.new(root, {
+                      sprite: circle
+                  });
+              });
 
             formatDateCustom = "yyyy-MM-dd";
 

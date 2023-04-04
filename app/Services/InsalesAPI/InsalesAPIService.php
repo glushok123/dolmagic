@@ -129,8 +129,8 @@ class InsalesAPIService extends BaseModelService
      */
     public function getQuantityProduct(int $productId): int
     {
-        $obj1 = DB::table('warehouses_stocks')->where('warehouse_id', 1)->where('product_id', $productId)->orderBy('save_date', 'DESC')->first();
-        $obj2 = DB::table('warehouses_stocks')->where('warehouse_id', 2)->where('product_id', $productId)->orderBy('save_date', 'DESC')->first();
+        $obj1 = DB::table('warehouse_products_amounts')->where('warehouse_id', 1)->where('product_id', $productId)->orderBy('save_date', 'DESC')->first();
+        $obj2 = DB::table('warehouse_products_amounts')->where('warehouse_id', 2)->where('product_id', $productId)->orderBy('save_date', 'DESC')->first();
 
         if ($obj1 == null) {
             $available1 = 0;
