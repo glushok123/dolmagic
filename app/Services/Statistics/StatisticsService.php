@@ -231,8 +231,9 @@ class StatisticsService extends BaseModelService
 
             $arrayUniqueIdSales[] = $item->id;
 
+            $idSalesSystem = $item->system_order_id == null ? $item->id : $item->system_order_id;
             $this->arrayCollectionByDatePreparation[] = [
-                '<a class="btn btn-primary" href="https://crmdollmagic.ru/sales/edit/' . $item->id . '" target="_blank">' . $item->system_order_id . '</a>',
+                '<a class="btn btn-primary" href="https://crmdollmagic.ru/sales/edit/' . $item->id . '" target="_blank">' . $idSalesSystem . '</a>',
                 $item->date_sale,
                 $statuses[$item->status_id],
                 $shops[$item->type_shop_id],
