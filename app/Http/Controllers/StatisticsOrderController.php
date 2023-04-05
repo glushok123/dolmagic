@@ -165,6 +165,30 @@ class StatisticsOrderController extends Controller
 
         $responseArray = [];
 
+        if (in_array('all' ,$request->shopId)) {
+            $service = StatisticsService::getInstance();
+
+            $service->setProperties(
+                $request->step, 
+                'all', 
+                $request->unit, 
+                $request->dateStartSales, 
+                $request->dateEndSales,
+                $request->type,
+                $request->checkedSp,
+                $request->checkedSelfPurchase,
+                $request->checkedStatusCancel,
+                $request->article,
+            );
+
+            $responseArray = $service->getInfoStaticsSalesByDateForTable();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $responseArray,
+            ]);
+        }
+
         $service = StatisticsService::getInstance();
         $service->setUnionTrue();
 
