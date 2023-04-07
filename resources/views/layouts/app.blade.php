@@ -23,7 +23,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 	<link href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css" rel="stylesheet">
 	<link href="{{ asset('js/bootstrap/bootstrap.css') }}" rel="stylesheet">
-	<link href="{{ asset('js/toastr/toastr.css') }}" rel="stylesheet">
+	
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
 	integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
 
@@ -32,7 +32,8 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" integrity="sha512-mR/b5Y7FRsKqrYZou7uysnOdCIJib/7r5QeJMFvLNHNhtye3xJp1TdJVPLtetkukFn227nKpXD9OjUc09lx97Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js" integrity="sha512-FHZVRMUW9FsXobt+ONiix6Z0tIkxvQfxtCSirkKc5Sb4TKHmqq1dZa8DphF0XqKb3ldLu/wgMa8mT6uXiLlRlw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+    <!-- Bootstrap Font Icon CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 	<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
 	 
@@ -44,7 +45,7 @@
 	<script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
 	<script src="https://yastatic.net/es5-shims/0.0.2/es5-shims.min.js"></script>
 	<script src="https://yastatic.net/share2/share.js"></script>
-
+	<link href="{{ asset('js/toastr/toastr.css') }}" rel="stylesheet">
 	<script src="{{ asset('js/app.js') }}" defer></script>
 	<script>
 		$.ajaxSetup({
@@ -133,6 +134,9 @@
 		.nav-item{
 			margin-left:8%;
 			margin-top:10px;
+		}
+		.copy:hover{
+			color: red;
 		}
 	</style>
 </body>

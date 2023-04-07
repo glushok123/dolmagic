@@ -725,6 +725,20 @@ function changefilterOrdersProducts(union=false) {
     getInfoStaticsOrders(union, 'products');
 }
 
+
+/**
+ * Копирование
+ */
+function copyToClipboard(element) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(element).text()).select();
+    document.execCommand("copy");
+    $temp.remove();
+    toastr.success('Скопировано!')
+}
+
+
 $(document).on('click', '#get-grafics', function(){ changefilterOrders() });
 $(document).on('click', '#get-union', function(){ changefilterOrders(true) });
 

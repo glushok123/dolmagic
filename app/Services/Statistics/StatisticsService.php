@@ -126,6 +126,14 @@ class StatisticsService extends BaseModelService
                 }
             });
 
+        if ($this->unit == 'mrg') {
+            $mrgArray = DB::connection('tech')
+                ->table('calculation_mrg_sales')
+                ->select('sale_id', 'mrg_sale')
+                ->pluck('mrg_sale', 'sale_id')
+                ->toArray();
+        }
+
         foreach ($this->arrayCollectionBtDate as $date) {
             $firstItem = $date->first();
             if ($this->interval == 'day') {
@@ -160,8 +168,18 @@ class StatisticsService extends BaseModelService
                 $productPurchasePrice += $item->purchase_price * $item->product_quantity;
 
                 if ($this->unit == 'mrg') {
+                /* 
                     $model = Sale::where('id', $item->id)->first();
                     $marginValue[$item->id][] = $model->marginValue;
+                */
+
+                    if (array_key_exists($item->id, $mrgArray) == true) {
+                        $marginValue[$item->id][] = $mrgArray[$item->id];
+                    }
+                    else{
+                        $model = Sale::where('id', $item->id)->first();
+                        $marginValue[$item->id][] = $model->marginValue;
+                    }
                 }
             }
 
@@ -232,10 +250,15 @@ class StatisticsService extends BaseModelService
             $arrayUniqueIdSales[] = $item->id;
 
             $idSalesSystem = $item->system_order_id == null ? $item->id : $item->system_order_id;
+            $status = array_key_exists($item->status_id, $statuses) == true ? $statuses[$item->status_id] : 'Статус не найден';
+
             $this->arrayCollectionByDatePreparation[] = [
-                '<a class="btn btn-primary" href="https://crmdollmagic.ru/sales/edit/' . $item->id . '" target="_blank">' . $idSalesSystem . '</a>',
+                '<a class="btn btn-primary" href="https://crmdollmagic.ru/sales/edit/' . $item->id . '" target="_blank">' . $idSalesSystem . '</a>
+                <p id="' . $item->id . '" hidden>' . $idSalesSystem . '</p>
+                <i class="bi bi-clipboard copy" onclick="copyToClipboard(\'#' . $item->id . '\')"></i>
+                ',
                 $item->date_sale,
-                $statuses[$item->status_id],
+                $status,
                 $shops[$item->type_shop_id],
             ];
         }

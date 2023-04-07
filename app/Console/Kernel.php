@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         Log::info('START CRON');
         $schedule->command('insales:synchronization')->everyThirtyMinutes();
         $schedule->command('calculate:mrgInterval')->everyTwoHours();
+        $schedule->command('calculate:mrg')->dailyAt('01:00');
     }
 
     /**

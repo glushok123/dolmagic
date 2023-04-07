@@ -106,6 +106,7 @@ class StatisticsRepository extends BaseModelRepository
                 'sales_products.status_id',
                 'products.sku',
                 'orders.system_order_id',
+                //'mrg_calc.mrg_sale',
             );
     }
 
