@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Eloquent\Sales\Sale;
+use Illuminate\Support\Facades\Log;
 use DB;
 
 class CalculationMrgSales extends Command
