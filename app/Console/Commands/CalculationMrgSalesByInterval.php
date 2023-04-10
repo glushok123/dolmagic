@@ -24,12 +24,27 @@ class CalculationMrgSalesByInterval extends Command
     protected $description = 'Command description';
 
     /**
+     * Сохранение лога и вывод сообщения в консоль
+     * 
+     * @param string $message
+     * 
+     * @return void
+     */
+    public function printLog(string $message): void
+    {
+        $this->info($message);
+        Log::info($message);
+    }
+
+    /**
      * Execute the console command.
      *
      * @return int
      */
     public function handle()
     {
+        $this->info('Старт Расчёт маржи за 100 дней');
+
         $countSales = DB::table('sales')
             ->where('created_at', '>=', Carbon::now()->subDays(100)->toDateTimeString())
             ->count();
@@ -60,6 +75,8 @@ class CalculationMrgSalesByInterval extends Command
         });
 
         $progressBar->finish();
+
+        $this->info('Конец Расчёт маржи за 100 дней');
 
         return Command::SUCCESS;
     }

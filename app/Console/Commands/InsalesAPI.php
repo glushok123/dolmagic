@@ -126,6 +126,7 @@ class InsalesAPI extends Command
         $this->info($message);
         Log::info($message);
     }
+
     /**
      * Execute the console command.
      *

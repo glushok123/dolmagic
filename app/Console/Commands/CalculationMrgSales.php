@@ -24,12 +24,27 @@ class CalculationMrgSales extends Command
     protected $description = 'Command description';
 
     /**
+     * Сохранение лога и вывод сообщения в консоль
+     * 
+     * @param string $message
+     * 
+     * @return void
+     */
+    public function printLog(string $message): void
+    {
+        $this->info($message);
+        Log::info($message);
+    }
+
+    /**
      * Execute the console command.
      *
      * @return int
      */
     public function handle()
     {
+        $this->info('Старт Расчёт маржи Общей');
+
         $countSales = DB::table('sales')->count();
 
         $progressBar = $this->output->createProgressBar($countSales);
@@ -57,6 +72,8 @@ class CalculationMrgSales extends Command
         });
 
         $progressBar->finish();
+
+        $this->info('Конец Расчёт маржи Общей');
 
         return Command::SUCCESS;
     }
