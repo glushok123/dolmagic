@@ -352,7 +352,6 @@ function diagramaLine(id) {
                 
                   circle.events.on("click", function(e) {
                       getInfoByCircle(e.target.dataItem.dataContext)
-                      //console.log("bullet clicked", e.target.dataItem.dataContext)
                   })
 
                   return am5.Bullet.new(root, {
