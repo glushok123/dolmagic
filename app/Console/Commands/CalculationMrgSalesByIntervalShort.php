@@ -37,7 +37,7 @@ class CalculationMrgSalesByIntervalShort extends Command
         $progressBar = $this->output->createProgressBar($countSales);
         $progressBar->start();
 
-        Sale::where('created_at', '>=', Carbon::now()->subDays(100)->toDateTimeString())
+        Sale::where('created_at', '>=', Carbon::now()->subDays(10)->toDateTimeString())
             ->chunk(100, function($sales) use ($progressBar) {
                 foreach ($sales as $sale) {
                     if (DB::connection('tech')->table('calculation_mrg_sales')->where('sale_id', $sale->id)->exists() == false) {
