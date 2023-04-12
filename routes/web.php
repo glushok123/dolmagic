@@ -20,3 +20,9 @@ Route::post('/get-info-statics-product', 'App\Http\Controllers\StatisticsOrderCo
 Route::post('/get-info-statics-sales-by-date-for-table', 'App\Http\Controllers\StatisticsOrderController@getInfoStaticsSalesByDateForTable')->name('getInfoStaticsSalesByDateForTable');
 
 Route::get('/insales-api', 'App\Http\Controllers\InsalesAPIController@show')->name('insales-api');
+
+Route::get('/group-shop', 'App\Http\Controllers\StatisticsOrderController@show')->name('statistics');
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::get('statistics', 'App\Http\Controllers\Admin\AdminStatisticsOrderController@showAdmin')->name('statisticsAdmin');
+});

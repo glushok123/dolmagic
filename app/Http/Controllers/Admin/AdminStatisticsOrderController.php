@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\StatisticsOrder;
 use Illuminate\Http\Request;
@@ -10,20 +10,13 @@ use App\Services\Statistics\StatisticsProductsService;
 use App\Eloquent\Order\OrdersTypeShop;
 use DB;
 
-class StatisticsOrderController extends Controller
+class AdminStatisticsOrderController extends Controller
 {
     /**
      * Главная страница статистики
      */
-    public function show()
+    public function showAdmin()
     {
-        if (backpack_auth()->check() == false) {
-            return redirect(url('admin/login'));
-        }else {
-            return redirect(url('admin/statistics'));
-        }
-
-        /*
         $shops = OrdersTypeShop::select('id', 'name')
             ->where('filter_order', '!=', 0)
             ->orderBy('filter_order')
@@ -33,11 +26,10 @@ class StatisticsOrderController extends Controller
             ->select('id', 'name')
             ->get();
 
-        return view('statistics.index')->with([
+        return view('admin.statistics.index')->with([
             'shops' => $shops,
             'warehouses' => $warehouses,
         ]);
-        */
     }
 
     /**

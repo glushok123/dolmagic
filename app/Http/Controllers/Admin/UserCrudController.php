@@ -39,31 +39,17 @@ class UserCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::addColumn([
-            'label'     => 'Имя',
-            'name'      => 'name',
-        ]);
-
-        CRUD::addColumn([
-            'name'      => 'logo',
-            'label'     => 'Фото',
-            'type'      => 'image',
-            'prefix' => 'public/uploads/',
-            'height' => 'auto',
-            'width'  => '130px',
-        ]);
-
-        CRUD::addColumn([
-            'label'     => 'Рейтинг',
-            'name'      => 'rating',
-        ]);
-
-        CRUD::addColumn([
-            'label'     => 'Количество заказов',
-            'name'      => 'count_order',
-        ]);
-
+        CRUD::column('name');
         CRUD::column('email');
+        CRUD::column('password');
+        CRUD::column('comment');
+        CRUD::column('blocked');
+
+        /**
+         * Columns can be defined using the fluent syntax or array syntax:
+         * - CRUD::column('price')->type('number');
+         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
+         */
     }
 
     /**
@@ -76,31 +62,17 @@ class UserCrudController extends CrudController
     {
         CRUD::setValidation(UserRequest::class);
 
-        CRUD::addField([
-            'label'     => 'Имя',
-            'name'      => 'name',
-        ]);
-
-        CRUD::addField([
-            'label'     => 'Рейтинг',
-            'name'      => 'rating',
-        ]);
-
-        CRUD::addField([
-            'label'     => 'Количество заказов',
-            'name'      => 'count_order',
-        ]);
-
+        CRUD::field('name');
         CRUD::field('email');
-
-        CRUD::addField([
-            'name' => 'logo',
-            'type' => 'upload',
-            'upload' => true,
-            'disk' => 'uploads'
-        ]);
-
         CRUD::field('password');
+        CRUD::field('comment');
+        CRUD::field('blocked');
+
+        /**
+         * Fields can be defined using the fluent syntax or array syntax:
+         * - CRUD::field('price')->type('number');
+         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
+         */
     }
 
     /**
