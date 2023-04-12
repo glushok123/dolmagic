@@ -27,7 +27,8 @@ class GroupShop extends Model
 
     public function shops()
     {
-        return $this->hasMany(ShopByGroup::class, 'group_id', 'id');
+        //return $this->hasMany(ShopByGroup::class, 'group_id', 'id');
+        return $this->belongsToMany(OrdersTypeShop::class, 'shop_by_groups', 'group_id', 'shop_id');
     }
 
     public function getShops() {
@@ -35,10 +36,13 @@ class GroupShop extends Model
         $shops = OrdersTypeShop::select('id', 'name')
             ->whereIn('id', $arrayShopsId)
             ->get();
+
         $text = '';
+
         foreach ($shops as $shop) {
             $text = $text . $shop->name . ', ';
         }
+
         return $text;
     }
 }

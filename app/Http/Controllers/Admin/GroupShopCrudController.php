@@ -42,15 +42,12 @@ class GroupShopCrudController extends CrudController
         CRUD::column('name');
 
         CRUD::addColumn([
-            // run a function on the CRUD model and show its return value
             'name'  => 'Магазины',
-            'label' => 'URL', // Table column heading
+            'label' => 'Магазины', // Table column heading
             'type'  => 'model_function',
             'function_name' => 'getShops', // the method in your Model
-            // 'function_parameters' => [$one, $two], // pass one/more parameters to that method
-            // 'limit' => 100, // Limit the number of characters shown
-            // 'escaped' => false, // echo using {!! !!} instead of {{ }}, in order to render HTML
         ]);
+
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
@@ -77,7 +74,7 @@ class GroupShopCrudController extends CrudController
             'entity'    => 'shops',
             'attribute' => 'name',
             'model'     => "App\Models\Shop",
-            'pivot'     => false,
+            'pivot'     => true,
             // 'number_of_columns' => 3,
         ]);
 
