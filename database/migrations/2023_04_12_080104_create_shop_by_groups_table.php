@@ -13,8 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('group_shops', function (Blueprint $table) {
+        Schema::create('shop_by_groups', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('group_id');
+            $table->unsignedInteger('shop_id');
+
+            $table->foreign('group_id')->references('id')->on('group_shops');
+
             $table->timestamps();
         });
     }
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('group_shops');
+        Schema::dropIfExists('shop_by_groups');
     }
 };

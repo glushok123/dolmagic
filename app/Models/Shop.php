@@ -6,7 +6,7 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GroupShop extends Model
+class Shop extends Model
 {
     use CrudTrait;
     use HasFactory;
@@ -14,17 +14,14 @@ class GroupShop extends Model
     /**
      * @var string
      */
-    protected $table = 'group_shops';
+    protected $table = 'orders_type_shops';
 
     /**
      * @var array
      */
     protected $fillable = [
+        'type',
         'name',
+        'archive',
     ];
-
-    public function shops()
-    {
-        return $this->BelongsToMany('App\Models\ShopByGroup');
-    }
 }
