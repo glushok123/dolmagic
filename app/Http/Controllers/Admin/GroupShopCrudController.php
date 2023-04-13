@@ -79,7 +79,6 @@ class GroupShopCrudController extends CrudController
             'attribute' => 'name',
             'model'     => "App\Models\Shop",
             'pivot'     => true,
-            // 'number_of_columns' => 3,
         ]);
 
         

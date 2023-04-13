@@ -27,8 +27,9 @@ class GroupShop extends Model
 
     public function shops()
     {
-        //return $this->hasMany(ShopByGroup::class, 'group_id', 'id');
-        return $this->belongsToMany(OrdersTypeShop::class, 'shop_by_groups', 'group_id', 'shop_id');
+        return $this->belongsToMany(OrdersTypeShop::class, 'shop_by_groups', 'group_id', 'shop_id')
+            ->where('archive', '!=', 1)
+            ->orWhereNull('archive');
     }
 
     public function getShops() {
