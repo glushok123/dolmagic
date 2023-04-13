@@ -28,8 +28,8 @@ class GroupShop extends Model
     public function shops()
     {
         return $this->belongsToMany(OrdersTypeShop::class, 'shop_by_groups', 'group_id', 'shop_id')
-            ->where('archive', '!=', 1)
-            ->orWhereNull('archive');
+            ->where('orders_type_shops.archive', '!=', 1)
+            ->orWhereNull('orders_type_shops.archive');
     }
 
     public function getShops() {
