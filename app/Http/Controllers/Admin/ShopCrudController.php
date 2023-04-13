@@ -30,6 +30,8 @@ class ShopCrudController extends CrudController
         CRUD::setRoute(config('backpack.base.route_prefix') . '/shop');
         CRUD::setEntityNameStrings('shop', 'shops');
         $this->crud->denyAccess(['delete']);
+
+        $this->crud->orderBy('archive');
     }
 
     /**
@@ -42,8 +44,23 @@ class ShopCrudController extends CrudController
     {
         CRUD::column('type');
         CRUD::column('name');
-        CRUD::column('archive');
 
+        CRUD::addColumn([
+            'name' => 'archive',
+            'type'  => 'boolean',
+            'options' => [
+                1 => 'В архиве'
+            ],
+            'wrapper' => [
+                'element' => 'span',
+                'class' => function ($crud, $column, $entry, $related_key) {
+                    if ($column['text'] == 'В архиве') {
+                        return 'bg-danger';
+                    }
+                },
+            ],
+        ]); 
+        
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
