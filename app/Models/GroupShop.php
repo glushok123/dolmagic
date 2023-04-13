@@ -37,12 +37,12 @@ class GroupShop extends Model
             ->whereIn('id', $arrayShopsId)
             ->get();
 
-        $text = '';
+        $text = '<p>';
 
         foreach ($shops as $shop) {
-            $text = $text . $shop->name . ', ';
+            $text = $text . $shop->name . ', <br>';
         }
 
-        return $text;
+        return $text . '</p>';
     }
 }

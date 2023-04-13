@@ -29,6 +29,7 @@ class ShopCrudController extends CrudController
         CRUD::setModel(\App\Models\Shop::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/shop');
         CRUD::setEntityNameStrings('shop', 'shops');
+        $this->crud->denyAccess(['delete']);
     }
 
     /**

@@ -29,6 +29,7 @@ class GroupShopCrudController extends CrudController
         CRUD::setModel(\App\Models\GroupShop::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/group-shop');
         CRUD::setEntityNameStrings('group shop', 'group shops');
+        $this->crud->denyAccess(['delete']);
     }
 
     /**
@@ -46,6 +47,10 @@ class GroupShopCrudController extends CrudController
             'label' => 'Магазины', // Table column heading
             'type'  => 'model_function',
             'function_name' => 'getShops', // the method in your Model
+            'visibleInTable'  => true, // no point, since it's a large text
+            'visibleInShow'   => true,
+            'limit'=> 1000,
+            'escaped' => false,
         ]);
 
         /**

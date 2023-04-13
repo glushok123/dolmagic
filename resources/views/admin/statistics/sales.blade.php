@@ -35,7 +35,7 @@
         <div class='col'>
             <label for="disabledSelect" class="form-label">Магазины</label>
             <div class="">
-                <select class="selectpicker" multiple aria-label="size 3 select example"  id='shop'>
+                <select class="selectpicker" multiple aria-label="size 3 select example"  id='shop' data-size="11">
                   <option selected value="all">Все</option>
                   @foreach ($shops as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>

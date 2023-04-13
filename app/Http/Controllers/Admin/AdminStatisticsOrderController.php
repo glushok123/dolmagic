@@ -17,6 +17,10 @@ class AdminStatisticsOrderController extends Controller
      */
     public function showAdmin()
     {
+        if (backpack_auth()->check() == false) {
+            return redirect(url('admin/login'));
+        }
+
         $shops = OrdersTypeShop::select('id', 'name')
             ->where('filter_order', '!=', 0)
             ->orderBy('filter_order')
