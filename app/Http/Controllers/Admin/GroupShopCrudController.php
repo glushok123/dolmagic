@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\GroupShopRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use DB;
 
 /**
  * Class GroupShopCrudController
@@ -67,21 +68,29 @@ class GroupShopCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
+
+        $shopName =  DB::table('orders_type_shops')
+            ->select('id', 'name')
+            ->where('archive', '!=', 1)
+            ->orWhereNull('archive')
+            ->pluck('name', 'id')
+            ->toArray();
+
         CRUD::setValidation(GroupShopRequest::class);
 
         CRUD::field('name');
 
         CRUD::addField([
             'label'     => 'Магазины',
-            'type'      => 'checklist',
+            'type'      => 'checklist_hidden',
             'name'      => 'shops',
             'entity'    => 'shops',
             'attribute' => 'name',
             'model'     => "App\Models\Shop",
             'pivot'     => true,
+            'shopName'     => $shopName,
         ]);
 
-        
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
