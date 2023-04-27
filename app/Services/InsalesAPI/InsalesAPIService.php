@@ -190,7 +190,6 @@ class InsalesAPIService extends BaseModelService
         $response = Http::acceptJson()
             ->withBasicAuth($this->login, $this->password)
             ->delete($this->host . 'products/' . $idProduct . '/variants/' . $idVariant .'.json');
-        return $response->json();
     }
 
     /**
