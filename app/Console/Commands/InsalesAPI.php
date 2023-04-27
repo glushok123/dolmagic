@@ -59,6 +59,8 @@ class InsalesAPI extends Command
         while ($numberPageCurrent <= $countPage) {
             $collectProducts = $service->getInfoProductsByInsales($numberPageCurrent);
 
+            $this->printLog('Получено товаров: ' . count($collectProducts));
+
             foreach ($collectProducts as $product) {
                 $this->obj[$product['id']]['product_id_insales'] = $product['id'];
                 $this->obj[$product['id']]['category_id'] = $product['category_id'];
@@ -135,6 +137,8 @@ class InsalesAPI extends Command
     public function handle()
     {
         ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', 1000);
+
         $service = InsalesAPIService::getInstance();
 
         $this->info('Старт синхронизации');
@@ -207,7 +211,11 @@ class InsalesAPI extends Command
 
         foreach ($this->arrayIdVariantsByRemove as $key => $value) { // удаляем дубликаты
             foreach ($value as $variant) {
-                $service->deleteVariantProduct($key, $variant['variants_id']);
+                if ($variant['count_variants_product'] == 1) {
+                    $service->deleteProduct($key);
+                }else {
+                    $service->deleteVariantProduct($key, $variant['variants_id']);
+                }
             }
         }
 

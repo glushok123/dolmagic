@@ -177,11 +177,34 @@ class InsalesAPIService extends BaseModelService
             ]);
     }
 
+    /**
+     * Удаление варианта товара
+     * 
+     * @param int $idProduct
+     * @param int $idVariant
+     * 
+     * @return void
+     */
     public function deleteVariantProduct(int $idProduct, int $idVariant): void
     {
         $response = Http::acceptJson()
             ->withBasicAuth($this->login, $this->password)
             ->delete($this->host . 'products/' . $idProduct . '/variants/' . $idVariant .'.json');
+        return $response->json();
+    }
+
+    /**
+     * Удаление товара
+     * 
+     * @param int $idProduct
+     * 
+     * @return void
+     */
+    public function deleteProduct(int $idProduct): void
+    {
+        $response = Http::acceptJson()
+            ->withBasicAuth($this->login, $this->password)
+            ->delete($this->host . 'products/' . $idProduct . '.json');
     }
 
     public function createVariantProduct($idProduct, $idVariant, $infoProduct, $productInfo)
