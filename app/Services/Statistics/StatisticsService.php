@@ -159,19 +159,25 @@ class StatisticsService extends BaseModelService
             $incomesValue = 0;
             $costsValue = 0;
             $saleIncomesValue = 0;
-
-            $count = $date->count();
+            $count = 0;
+            //$count = $date->count();
             $marginValue = [];
+            $idSales = [];
 
             foreach ($date as $item) {
                 $productPrice += $item->product_price * $item->product_quantity;
                 $productPurchasePrice += $item->purchase_price * $item->product_quantity;
 
+                if (in_array($item->id, $idSales) == false) {
+                    $idSales[] = $item->id;
+                    $count = $count + 1;
+                }
+
                 if ($this->unit == 'mrg') {
-                /* 
-                    $model = Sale::where('id', $item->id)->first();
-                    $marginValue[$item->id][] = $model->marginValue;
-                */
+                    /* 
+                        $model = Sale::where('id', $item->id)->first();
+                        $marginValue[$item->id][] = $model->marginValue;
+                    */
 
                     if (array_key_exists($item->id, $mrgArray) == true) {
                         $marginValue[$item->id][] = $mrgArray[$item->id];

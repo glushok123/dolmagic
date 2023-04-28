@@ -168,15 +168,15 @@ class StatisticsRepository extends BaseModelRepository
 
         if ($this->dateStartSales != null) {
             $this->builder = $this->builder
-                ->where('sales.date_sale', '>=', $this->dateStartSales);
+                ->whereDate('sales.date_sale', '>=', $this->dateStartSales);
         }
 
         if ($this->dateEndSales != null) {
             $dateEndSales = Carbon::parse($this->dateEndSales);
-            $dateEndSales->addDays(1);
+            //$dateEndSales->addDays(1);
 
             $this->builder = $this->builder
-                ->where('sales.date_sale', '<=', $dateEndSales );
+                ->whereDate('sales.date_sale', '<=', $dateEndSales );
         }
     }
 
