@@ -55,8 +55,17 @@ class StatisticsOrderController extends Controller
 
         $responseArray = [];
 
+        if ($request->has('percentages') && $request->percentages == "true") {
+            $service->setRefundsPercentagesTrue();
+        }
+
         foreach ($request->shopId as $item) {
             $service = StatisticsService::getInstance();
+
+            if ($request->has('percentages') && $request->percentages == "true") {
+                $service->setRefundsPercentagesTrue();
+            }
+
             $service->setProperties(
                 $request->step, 
                 $item, 
@@ -82,6 +91,11 @@ class StatisticsOrderController extends Controller
         if($request->union == 'true') {
             $service = StatisticsService::getInstance();
             $service->setUnionTrue();
+
+            if ($request->has('percentages') && $request->percentages == "true") {
+                $service->setRefundsPercentagesTrue();
+            }
+
             $service->setProperties(
                 $request->step, 
                 $request->shopId, 

@@ -223,6 +223,7 @@ function getInfoStaticsOrders(union=false, type) {
             checkedSelfPurchase: $('#refunds-CheckedSelfPurchase').is(':checked'),
             checkedStatusCancel: $('#refunds-CheckedStatusCancel').is(':checked'),
             article: $('#refunds-article-product').val(),
+            percentages: $('#refunds-percentages').is(':checked'),
         };
     }
 

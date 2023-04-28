@@ -36,10 +36,10 @@
             <label for="disabledSelect" class="form-label">Магазины</label>
             <div class="">
                 <select class="selectpicker" multiple aria-label="size 3 select example"  id='shop-refunds'>
-                  <option selected value="all">Все</option>
-                  @foreach ($shops as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                @endforeach
+                    <option selected value="all">Все</option>
+                    @foreach ($shops as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
                 </select>
               </div>
 
@@ -53,6 +53,16 @@
                 <option value='mrg'>маржа</option>
                 <option value="count">шт</option>
             </select>
+        </div>
+        
+        <div class='col'>
+            <br>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="refunds-percentages" >
+                <label class="form-check-label" for="refunds-CheckedProcentCancel">
+                    В процентах
+                </label>
+            </div>
         </div>
 
         <div class='col'>
@@ -90,6 +100,7 @@
                     Исключить Статус "Отмена"
                 </label>
             </div>
+
         </div>
         <div class='col bg-info date-custom'>
             <label for="disabledSelect" class="form-label fw-bolder">Дата начальная</label>

@@ -20,11 +20,14 @@ class StatisticsService extends BaseModelService
     public $union = false; //объединение
     public $type = 'sales'; //тип
     public $builder = ''; //Builder
-
     public $arrayCollectionBtDate = [];
+
     public $arrayCollectionByDatePreparations = [];
+    public $arrayCollectionByDateForCalculatePercentages = [];
+    public $arrayCollectionBtDatePercentagesRefunds = [];
 
     public $checkedSp = true;
+    public $percentages = false;
     public $checkedSelfPurchase = true;
     public $checkedStatusCancel = true;
     public $article;
@@ -38,6 +41,16 @@ class StatisticsService extends BaseModelService
     {
         $this->union = true;
         $this->repository->setUnionTrue();
+    }
+
+    /**
+     * Флаг возврат в процентах (только ВОЗВРАТЫ)
+     * 
+     * @return void
+     */
+    public function setRefundsPercentagesTrue(): void
+    {
+        $this->percentages = true;
     }
 
     /**
@@ -75,12 +88,15 @@ class StatisticsService extends BaseModelService
         if($checkedSp == 'false') {
             $this->checkedSp = false;
         }
+
         if($checkedSelfPurchase == 'false') {
             $this->checkedSelfPurchase = false;
         }
+
         if($checkedStatusCancel == 'false') {
             $this->checkedStatusCancel = false;
         }
+
         $this->repository->setProperties(
             $this->interval, 
             $this->shopId, 
@@ -132,6 +148,10 @@ class StatisticsService extends BaseModelService
                 ->select('sale_id', 'mrg_sale')
                 ->pluck('mrg_sale', 'sale_id')
                 ->toArray();
+        }
+
+        if ($this->percentages == true) {
+            $this->getInfoByCalculatePercentagesRefunds();
         }
 
         foreach ($this->arrayCollectionBtDate as $date) {
@@ -189,37 +209,73 @@ class StatisticsService extends BaseModelService
                 }
             }
 
-            if ($this->unit == 'ryb') {
-                $this->arrayCollectionByDatePreparation[] = [
-                    'date' => (string) $dateMarket,
-                    'value' => $productPrice
-                ];
-            }
-
-            if ($this->unit == 'count') {
-                $this->arrayCollectionByDatePreparation[] = [
-                    'date' => (string) $dateMarket,
-                    'value' => $count
-                ];
-            }
-
-            if ($this->unit == 'ryb-purchase') {
-                $this->arrayCollectionByDatePreparation[] = [
-                    'date' => (string) $dateMarket,
-                    'value' => $productPurchasePrice
-                ];
-            }
-
-            if ($this->unit == 'mrg') {
-                foreach($marginValue as $item) {
-                    $productMrg += $item[0];
+            if ($this->percentages == false) {
+                if ($this->unit == 'ryb') {
+                    $this->arrayCollectionByDatePreparation[] = [
+                        'date' => (string) $dateMarket,
+                        'value' => $productPrice
+                    ];
                 }
 
-                $this->arrayCollectionByDatePreparation[] = [
-                    'date' => (string) $dateMarket,
-                    'value' => $productMrg
-                ];
+
+                if ($this->unit == 'count') {
+                    $this->arrayCollectionByDatePreparation[] = [
+                        'date' => (string) $dateMarket,
+                        'value' => $count
+                    ];
+                }
+    
+                if ($this->unit == 'ryb-purchase') {
+                    $this->arrayCollectionByDatePreparation[] = [
+                        'date' => (string) $dateMarket,
+                        'value' => $productPurchasePrice
+                    ];
+                }
+    
+                if ($this->unit == 'mrg') {
+                    foreach($marginValue as $item) {
+                        $productMrg += $item[0];
+                    }
+    
+                    $this->arrayCollectionByDatePreparation[] = [
+                        'date' => (string) $dateMarket,
+                        'value' => $productMrg
+                    ];
+                }
+            }else {
+                if ($this->unit == 'ryb') {
+                    $this->arrayCollectionByDatePreparation[] = [
+                        'date' => (string) $dateMarket,
+                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? ($productPrice*100)/$this->arrayCollectionByDateForCalculatePercentages[$dateMarket] : 0
+                    ];
+                }
+    
+                if ($this->unit == 'count') {
+                    $this->arrayCollectionByDatePreparation[] = [
+                        'date' => (string) $dateMarket,
+                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? ($count*100)/$this->arrayCollectionByDateForCalculatePercentages[$dateMarket] : 0
+                    ];
+                }
+    
+                if ($this->unit == 'ryb-purchase') {
+                    $this->arrayCollectionByDatePreparation[] = [
+                        'date' => (string) $dateMarket,
+                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? ($productPurchasePrice*100)/$this->arrayCollectionByDateForCalculatePercentages[$dateMarket] : 0
+                    ];
+                }
+    
+                if ($this->unit == 'mrg') {
+                    foreach($marginValue as $item) {
+                        $productMrg += $item[0];
+                    }
+    
+                    $this->arrayCollectionByDatePreparation[] = [
+                        'date' => (string) $dateMarket,
+                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? ($productMrg*100)/$this->arrayCollectionByDateForCalculatePercentages[$dateMarket] : 0 
+                    ];
+                }
             }
+
         }
 
         return empty($this->arrayCollectionByDatePreparation) == true ? [] : array_reverse($this->arrayCollectionByDatePreparation);
@@ -270,5 +326,138 @@ class StatisticsService extends BaseModelService
         }
 
         return empty($this->arrayCollectionByDatePreparation) == true ? [] : array_reverse($this->arrayCollectionByDatePreparation);
+    }
+
+    /**
+     * Массив для просчёта процентов
+     * 
+     * @return array
+     */
+    public function getInfoByCalculatePercentagesRefunds(): array
+    {
+        $this->repository->setProperties(
+            $this->interval, 
+            $this->shopId, 
+            $this->unit, 
+            $this->dateStartSales, 
+            $this->dateEndSales,
+            'sales',
+            $this->checkedSp,
+            $this->checkedSelfPurchase,
+            $this->checkedStatusCancel,
+            $this->article
+        );
+
+        $this->repository->initBuilderOrder();
+
+        $this->builder = $this->repository->getBuilder();
+
+        $this->arrayCollectionBtDatePercentagesRefunds = $this->builder
+            ->get()
+            ->groupBy(function($data) {
+                if ($this->interval == 'day') {
+                    return Carbon::parse($data->date_sale)->format('Y-m-d');
+                }
+
+                if ($this->interval == 'month') {
+                    return Carbon::parse($data->date_sale)->format('Y-m');;
+                }
+
+                if ($this->interval == 'year') {
+                    return Carbon::parse($data->date_sale)->format('Y');
+                }
+
+                if ($this->interval == 'week') {
+                    return Carbon::parse($data->date_sale)->format('Y-W');
+                }
+            });
+
+        if ($this->unit == 'mrg') {
+            $mrgArray = DB::connection('tech')
+                ->table('calculation_mrg_sales')
+                ->select('sale_id', 'mrg_sale')
+                ->pluck('mrg_sale', 'sale_id')
+                ->toArray();
+        }
+
+        foreach ($this->arrayCollectionBtDatePercentagesRefunds as $date) {
+            $firstItem = $date->first();
+            if ($this->interval == 'day') {
+                $dateMarket = Carbon::parse($firstItem->date_sale)->format('Y-m-d');
+            }
+
+            if ($this->interval == 'month') {
+                $dateMarket = Carbon::parse($firstItem->date_sale)->format('Y-m');
+            }
+
+            if ($this->interval == 'year') {
+                $dateMarket = Carbon::parse($firstItem->date_sale)->format('Y');
+            }
+
+            if ($this->interval == 'week') {
+                $dateMarket = Carbon::parse($firstItem->date_sale)->format('Y-W');
+            }
+
+            $productPrice = 0;
+            $productPurchasePrice = 0;
+            $productMrg = 0;
+            $saleCommission = 0;
+            $incomesValue = 0;
+            $costsValue = 0;
+            $saleIncomesValue = 0;
+            $count = 0;
+            //$count = $date->count();
+            $marginValue = [];
+            $idSales = [];
+
+            foreach ($date as $item) {
+                $productPrice += $item->product_price * $item->product_quantity;
+                $productPurchasePrice += $item->purchase_price * $item->product_quantity;
+
+                if (in_array($item->id, $idSales) == false) {
+                    $idSales[] = $item->id;
+                    $count = $count + 1;
+                }
+
+                if ($this->unit == 'mrg') {
+                    /* 
+                        $model = Sale::where('id', $item->id)->first();
+                        $marginValue[$item->id][] = $model->marginValue;
+                    */
+
+                    if (array_key_exists($item->id, $mrgArray) == true) {
+                        $marginValue[$item->id][] = $mrgArray[$item->id];
+                    }
+                    else{
+                        $model = Sale::where('id', $item->id)->first();
+                        $marginValue[$item->id][] = $model->marginValue;
+                    }
+                }
+            }
+
+
+            if ($this->unit == 'ryb') {
+                $this->arrayCollectionByDateForCalculatePercentages[$dateMarket] = $productPrice;
+            }
+
+            if ($this->unit == 'count') {
+                $this->arrayCollectionByDateForCalculatePercentages[$dateMarket] = $count;
+            }
+
+            if ($this->unit == 'ryb-purchase') {
+                $this->arrayCollectionByDateForCalculatePercentages[$dateMarket] = $productPurchasePrice;
+            }
+
+            if ($this->unit == 'mrg') {
+                foreach($marginValue as $item) {
+                    $productMrg += $item[0];
+                }
+
+                $this->arrayCollectionByDateForCalculatePercentages[$dateMarket] = $productMrg;
+            }
+
+        }
+
+        return empty($this->arrayCollectionByDateForCalculatePercentages) == true ? [] : $this->arrayCollectionByDateForCalculatePercentages;
     }
 }
