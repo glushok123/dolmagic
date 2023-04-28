@@ -1,4 +1,27 @@
 <section>
+
+    <hr style="color:brown;  height: 5px;">
+    <table id="myTableRefunds" class="display">
+        <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Дата продажи</th>
+                <th>Статус</th>
+                <th>Площадка</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+        </tbody>
+    </table>
+    <hr style="color:brown;  height: 5px;">
+
     <div class='row'>
         <div class='col'>
             <label for="disabledSelect" class="form-label">Интервал</label>
@@ -85,6 +108,28 @@
     <br>
     <hr>
     <div class="row">
+
+        <div class="container" id='loader-curent-refunds'>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="loader11">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            <br/>
+        </div>
+
         <div id="chart-refunds" class='chart-sales'></div>
         @php
             $count = 1;

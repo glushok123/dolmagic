@@ -22,8 +22,14 @@ var activeLink = 'sales';
 var spiner = '<div class="container"><div class="row text-center justify-content-center" style="margin-top:20px;"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div></div>';
 
 $('#loader-curent').hide()
+$('#loader-curent-refunds').hide()
+
 var tableSale = new DataTable('#myTableSales', {
     responsive: true,
+});
+
+var tableRefunds = new DataTable('#myTableRefunds', {
+  responsive: true,
 });
 
 function getFormatDate(dateObject) {
@@ -45,48 +51,95 @@ function getFormatDate(dateObject) {
     return date;
 };
 
+/**
+ * Информация при клике на точку (кружочек)
+ * 
+ */
 function getInfoByCircle(data) {
-    $('#loader-curent').show()
+    let typeActiveTab = $("ul#myTab li button.active").data('type');
+
+    copyToClipboardValue(data.value) //копирование значения в буфер обмена
 
     let timeStampDate = data.date;
     let myDate = getFormatDate(data.date)
 
-    data = {
-        step: $('#step-interval').val(),
-        shopId: $('#shop').val(),
-        unit: $('#count').val(),
-        dateStartSales: $('#date-start-sales').val(),
-        dateEndSales: $('#date-end-sales').val(),
-        union: false,
-        type: 'sales',
-        checkedSp: $('#sales-CheckedSp').is(':checked'),
-        checkedSelfPurchase: $('#sales-CheckedSelfPurchase').is(':checked'),
-        checkedStatusCancel: $('#sales-CheckedStatusCancel').is(':checked'),
-        article: $('#sales-article-product').val(),
-    };
+    if (typeActiveTab == 'sales') {
+        $('#loader-curent').show()
 
-    if ($('#step-interval').val() == 'day') {
-        data.dateStartSales = myDate;
-        data.dateEndSales = myDate;
-    }
+        data = {
+          step: $('#step-interval').val(),
+          shopId: $('#shop').val(),
+          unit: $('#count').val(),
+          dateStartSales: $('#date-start-sales').val(),
+          dateEndSales: $('#date-end-sales').val(),
+          union: false,
+          type: 'sales',
+          checkedSp: $('#sales-CheckedSp').is(':checked'),
+          checkedSelfPurchase: $('#sales-CheckedSelfPurchase').is(':checked'),
+          checkedStatusCancel: $('#sales-CheckedStatusCancel').is(':checked'),
+          article: $('#sales-article-product').val(),
+      };
 
-    if ($('#step-interval').val() == 'month') {
+      if ($('#step-interval').val() == 'day') {
+          data.dateStartSales = myDate;
+          data.dateEndSales = myDate;
+      }
+  
+      if ($('#step-interval').val() == 'month') {
+          let date = new Date(timeStampDate);
+          let firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+          let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+          data.dateStartSales = getFormatDate(firstDay);
+          data.dateEndSales = getFormatDate(lastDay);
+      }
+  
+      if ($('#step-interval').val() == 'year') {
         let date = new Date(timeStampDate);
-        let firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-        let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        data.dateStartSales = getFormatDate(firstDay);
-        data.dateEndSales = getFormatDate(lastDay);
+        let firstDay = date.getFullYear() + "-" + 01 + "-" + 01;
+        let lastDay = date.getFullYear() + "-" + 12 + "-" + 31;
+        data.dateStartSales = firstDay;
+        data.dateEndSales = lastDay;
+      }
     }
 
-    if ($('#step-interval').val() == 'year') {
-      let date = new Date(timeStampDate);
-      let firstDay = date.getFullYear() + "-" + 01 + "-" + 01;
-      let lastDay = date.getFullYear() + "-" + 12 + "-" + 31;
-      data.dateStartSales = firstDay;
-      data.dateEndSales = lastDay;
+    if (typeActiveTab == 'refunds') {
+        $('#loader-curent-refunds').show();
+
+        data = {
+            step: $('#step-interval-refunds').val(),
+            shopId: $('#shop-refunds').val(),
+            unit: $('#count-refunds').val(),
+            dateStartSales: $('#date-start-refunds').val(),
+            dateEndSales: $('#date-end-refunds').val(),
+            union: false,
+            type: 'refunds',
+            checkedSp: $('#refunds-CheckedSp').is(':checked'),
+            checkedSelfPurchase: $('#refunds-CheckedSelfPurchase').is(':checked'),
+            checkedStatusCancel: $('#refunds-CheckedStatusCancel').is(':checked'),
+            article: $('#refunds-article-product').val(),
+        };
+
+        if ($('#step-interval-refunds').val() == 'day') {
+            data.dateStartSales = myDate;
+            data.dateEndSales = myDate;
+        }
+
+        if ($('#step-interval-refunds').val() == 'month') {
+            let date = new Date(timeStampDate);
+            let firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+            data.dateStartSales = getFormatDate(firstDay);
+            data.dateEndSales = getFormatDate(lastDay);
+        }
+    
+        if ($('#step-interval-refunds').val() == 'year') {
+          let date = new Date(timeStampDate);
+          let firstDay = date.getFullYear() + "-" + 01 + "-" + 01;
+          let lastDay = date.getFullYear() + "-" + 12 + "-" + 31;
+          data.dateStartSales = firstDay;
+          data.dateEndSales = lastDay;
+        }
     }
-
-
 
     $.ajax({
       url: '/get-info-statics-sales-by-date-for-table',
@@ -95,9 +148,16 @@ function getInfoByCircle(data) {
       data: data,
       async: true,
       success: function(data) {
-          tableSale.clear().draw();
-          tableSale.rows.add(data.data).draw();
-          $('#loader-curent').hide()
+        if (typeActiveTab == 'sales') {
+            tableSale.clear().draw();
+            tableSale.rows.add(data.data).draw();
+            $('#loader-curent').hide()
+        }
+        if (typeActiveTab == 'refunds') {
+          tableRefunds.clear().draw();
+          tableRefunds.rows.add(data.data).draw();
+          $('#loader-curent-refunds').hide()
+      }
       },
       error: function (jqXHR, exception) {
          /* if (jqXHR.status === 0) {
@@ -726,7 +786,7 @@ function changefilterOrdersProducts(union=false) {
 
 
 /**
- * Копирование
+ * Копирование текста с элемента
  */
 function copyToClipboard(element) {
     var $temp = $("<input>");
@@ -737,6 +797,27 @@ function copyToClipboard(element) {
     toastr.success('Скопировано!')
 }
 
+/**
+ * Копирование текста с элемента
+ */
+function copyToClipboardValue(value) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val(value).select();
+  document.execCommand("copy");
+  $temp.remove();
+  toastr.success('Скопировано!')
+}
+
+/**
+ * Переход между табами
+ * 
+ */
+function changeTab(typeTab) {
+  // TO DO
+}
+
+$(document).on('click', '.nav-link', function() { changeTab($(this).data('type')) });
 
 $(document).on('click', '#get-grafics', function(){ changefilterOrders() });
 $(document).on('click', '#get-union', function(){ changefilterOrders(true) });
