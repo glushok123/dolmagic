@@ -40,13 +40,13 @@ class InsalesAPI extends Command
     {
         $service = InsalesAPIService::getInstance();
 
-        $this->printLog('Старт получения информации о товарах');
+        $this->printLog('Insales Старт получения информации о товарах');
 
         $countProductsByInsales = $service->getCountProductsByInsales();
         $countPage = ceil($countProductsByInsales/250);
 
-        $this->printLog('Количество товара на площадке: ' . $countProductsByInsales);
-        $this->printLog('Количество страниц: ' . $countPage);
+        $this->printLog('Insales Количество товара на площадке: ' . $countProductsByInsales);
+        $this->printLog('Insales Количество страниц: ' . $countPage);
 
         $countProductsBySeveralVariants = 0;
         $countProductsVariantsWithoutQuantity = 0;
@@ -59,7 +59,7 @@ class InsalesAPI extends Command
         while ($numberPageCurrent <= $countPage) {
             $collectProducts = $service->getInfoProductsByInsales($numberPageCurrent);
 
-            $this->printLog('Получено товаров: ' . count($collectProducts));
+            $this->printLog('Insales Получено товаров: ' . count($collectProducts));
 
             foreach ($collectProducts as $product) {
                 $this->obj[$product['id']]['product_id_insales'] = $product['id'];
@@ -111,9 +111,9 @@ class InsalesAPI extends Command
         }
         $progressBar->finish();
 
-        $this->printLog('Количество товаров у которых несколько вариантов: ' . $countProductsBySeveralVariants);
-        $this->printLog('Количество вариантов у которых отстутствует количество: ' . $countProductsVariantsWithoutQuantity);
-        $this->printLog('Количество товаров которые дублируются: ' . count($this->arrayIdVariantsByRemove));
+        $this->printLog('Insales Количество товаров у которых несколько вариантов: ' . $countProductsBySeveralVariants);
+        $this->printLog('Insales Количество вариантов у которых отстутствует количество: ' . $countProductsVariantsWithoutQuantity);
+        $this->printLog('Insales Количество товаров которые дублируются: ' . count($this->arrayIdVariantsByRemove));
     }
 
     /**
@@ -141,7 +141,7 @@ class InsalesAPI extends Command
 
         $service = InsalesAPIService::getInstance();
 
-        $this->info('Старт синхронизации');
+        $this->info('Старт синхронизации Insales');
         $this->getInfoProducts();
         $countProductUpdate = 0;
 
@@ -207,7 +207,7 @@ class InsalesAPI extends Command
 
         $progressBar->finish();
 
-        $this->printLog('Количество вариантов которые были обновлены: ' . $countProductUpdate);
+        $this->printLog('Insales Количество вариантов которые были обновлены: ' . $countProductUpdate);
 
         foreach ($this->arrayIdVariantsByRemove as $key => $value) { // удаляем дубликаты
             foreach ($value as $variant) {
@@ -219,11 +219,11 @@ class InsalesAPI extends Command
             }
         }
 
-        $this->printLog('Количество вариантов которые были удалены: ' . count($this->arrayIdVariantsByRemove));
+        $this->printLog('Insales Количество вариантов которые были удалены: ' . count($this->arrayIdVariantsByRemove));
 
         $productNeedToAdd = $service->getProductsNeedToAdd($this->arraySku);
 
-        $this->printLog('Количество товаров которые нужно добавить: ' . $productNeedToAdd->count());
+        $this->printLog('Insales Количество товаров которые нужно добавить: ' . $productNeedToAdd->count());
 
         foreach ($productNeedToAdd as $product) {
             /*
@@ -233,7 +233,7 @@ class InsalesAPI extends Command
             */
         }
 
-        $this->printLog('Конец синхронизации');
+        $this->printLog('Конец синхронизации Insales');
 
         return Command::SUCCESS;
     }

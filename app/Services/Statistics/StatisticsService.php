@@ -246,21 +246,21 @@ class StatisticsService extends BaseModelService
                 if ($this->unit == 'ryb') {
                     $this->arrayCollectionByDatePreparation[] = [
                         'date' => (string) $dateMarket,
-                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? ($productPrice*100)/$this->arrayCollectionByDateForCalculatePercentages[$dateMarket] : 0
+                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? round(($productPrice*100)/($this->arrayCollectionByDateForCalculatePercentages[$dateMarket] + $productPrice), 2) : 0
                     ];
                 }
     
                 if ($this->unit == 'count') {
                     $this->arrayCollectionByDatePreparation[] = [
                         'date' => (string) $dateMarket,
-                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? ($count*100)/$this->arrayCollectionByDateForCalculatePercentages[$dateMarket] : 0
+                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? round(($count*100)/($this->arrayCollectionByDateForCalculatePercentages[$dateMarket] + $count), 2) : 0
                     ];
                 }
     
                 if ($this->unit == 'ryb-purchase') {
                     $this->arrayCollectionByDatePreparation[] = [
                         'date' => (string) $dateMarket,
-                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? ($productPurchasePrice*100)/$this->arrayCollectionByDateForCalculatePercentages[$dateMarket] : 0
+                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? round(($productPurchasePrice*100)/($this->arrayCollectionByDateForCalculatePercentages[$dateMarket] + $productPurchasePrice), 2) : 0
                     ];
                 }
     
@@ -271,7 +271,7 @@ class StatisticsService extends BaseModelService
     
                     $this->arrayCollectionByDatePreparation[] = [
                         'date' => (string) $dateMarket,
-                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? ($productMrg*100)/$this->arrayCollectionByDateForCalculatePercentages[$dateMarket] : 0 
+                        'value' => array_key_exists($dateMarket, $this->arrayCollectionByDateForCalculatePercentages) ? round(($productMrg*100)/($this->arrayCollectionByDateForCalculatePercentages[$dateMarket] + $productMrg), 2) : 0 
                     ];
                 }
             }
