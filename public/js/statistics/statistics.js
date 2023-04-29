@@ -802,6 +802,7 @@ function copyToClipboard(element) {
  * Копирование текста с элемента
  */
 function copyToClipboardValue(value) {
+  value = value.toString().replace(".", ",");
   var $temp = $("<input>");
   $("body").append($temp);
   $temp.val(value).select();
