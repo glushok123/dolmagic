@@ -11,8 +11,7 @@ use DB;
 
 class SbermegamarketAPIService extends BaseModelService
 {
-    public $token = 'c99f12e7ce039a72b966b9255dcf8119';
-    public $password = '377254a1c36eab4178af2d97ccbf9d32';
+    public $token = '9670A80B-1F8E-4857-8589-D355E0A98FF7';
     public $hostPrices = 'https://partner.sbermegamarket.ru/api/merchantIntegration/v1/offerService/manualPrice/save';
     public $hostStocks = 'https://partner.sbermegamarket.ru/api/merchantIntegration/v1/offerService/stock/update';
 
@@ -44,12 +43,9 @@ class SbermegamarketAPIService extends BaseModelService
             ->where('products.archive', 0)
            // ->where('products.id', 5543)
             ->leftJoin('shop_prices', 'products.id', '=', 'shop_prices.product_id')
-           // ->limit(10)
+            ->limit(100)
             ->get();
 
-        //dd($infoProducts->count());
-        //$price = $infoProducts->pricePriority1 == null ? $infoProducts->pricePriority2 : $infoProducts->pricePriority1;
-        //dd($price);
         return  $infoProducts;
     }
 
@@ -121,23 +117,45 @@ class SbermegamarketAPIService extends BaseModelService
         return  $infoProducts;
     }
 
-    public function updatePricesProducts(array $productsPrice)
+    /**
+     * Обновление цен
+     * 
+     * @param array $productsPrice
+     * 
+     * @return array
+     */
+    public function updatePricesProducts(array $productsPrice): array
     {
         $response = Http::acceptJson()
             ->post($this->hostPrices, [
                 "meta" => [],
                 "data" => [
-                    "token" => "9670A80B-1F8E-4857-8589-D355E0A98FF7",
-                    "prices" => [
-                        [
-                            "offerId" => "48561",
-                            "price" => 2000,
-                            "isDeleted" => false
-                        ]
-                    ]
+                    "token" => $this->token,
+                    "prices" => $productsPrice
                 ]
             ]);
-        
-        dd($response->json());
+
+        return $response->json();
+    }
+
+    /**
+     * Обновление колличества
+     * 
+     * @param array $productsQuantity
+     * 
+     * @return array
+     */
+    public function updateStocksProducts(array $productsQuantity): array
+    {
+        $response = Http::acceptJson()
+            ->post($this->hostStocks, [
+                "meta" => [],
+                "data" => [
+                    "token" => $this->token,
+                    "stocks" => $productsQuantity
+                ]
+            ]);
+
+        return $response->json();
     }
 }
