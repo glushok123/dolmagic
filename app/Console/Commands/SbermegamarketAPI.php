@@ -98,7 +98,7 @@ class SbermegamarketAPI extends Command
                 $this->objPrice = [];
             }
 
-            if (count($this->objQuantity) == $this->countProductForRequest) {
+            /*if (count($this->objQuantity) == $this->countProductForRequest) {
                 foreach ($this->objQuantity as $key => $value) {
                     if (array_key_exists('offerId', $value) == false) {
                         unset($this->objQuantity[$key]);
@@ -119,7 +119,7 @@ class SbermegamarketAPI extends Command
                 }
 
                 $this->objQuantity = [];
-            }
+            }*/
 
             $progressBar->advance();
         }
