@@ -16,7 +16,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('insales:synchronization')->everyThirtyMinutes();
+        $schedule->command('insales:synchronization')->everyThirtyMinutes(); //синхронизация цен и остатков + удаление дублей || insales
+        $schedule->command('sbermegamarket:synchronization')->everyThirtyMinutes(); //синхронизация цен и остатков || sbermegamarket
 
         $schedule->command('calculate:mrgInterval')->everyTwoHours();
         $schedule->command('calculate:mrgIntervalShort')->everyTenMinutes();

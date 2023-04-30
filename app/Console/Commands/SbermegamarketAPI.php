@@ -42,6 +42,11 @@ class SbermegamarketAPI extends Command
         Log::info($message);
     }
 
+    /**
+     * Обновление цен
+     * 
+     * @return void
+     */
     public function updatePriceProducts(): void
     {
         foreach ($this->objPrice as $key => $value) {
@@ -56,14 +61,21 @@ class SbermegamarketAPI extends Command
 
         $response = $this->service->updatePricesProducts($this->objPrice);
 
-        if ($response['data']['warnings'] == []) {
+        if (array_key_exists('data', $response) && array_key_exists('savedPrices', $response['data'])) {
             $this->printLog("sbermegamarket Обновлено цен -> " . $response['data']['savedPrices']);
-        }else{
-            Log::error("sbermegamarket ОШИБКА ОБНОВЛЕНИЯ !!! цен !!!");
-            Log::error(print_r($response, true));
+        }
+
+        if (array_key_exists('data', $response) && array_key_exists('warnings', $response['data']) && $response['data']['warnings'] != []) {
+            Log::warning(print_r($response, true));
+            Log::warning("sbermegamarket ПРЕДУПРЕЖДЕНИЕ ОБНОВЛЕНИЯ !!! цен !!!");
         }
     }
 
+    /**
+     * Обновление остатков
+     * 
+     * @return void
+     */
     public function updateStocksProducts(): void
     {
         foreach ($this->objQuantity as $key => $value) {
