@@ -27,7 +27,7 @@ class SbermegamarketAPI extends Command
     public $objPrice = [];
     public $objQuantity = [];
     public $countProductForRequest = 200;
-
+    public $service;
 
     /**
      * Сохранение лога и вывод сообщения в консоль
@@ -42,6 +42,50 @@ class SbermegamarketAPI extends Command
         Log::info($message);
     }
 
+    public function updatePriceProducts(): void
+    {
+        foreach ($this->objPrice as $key => $value) {
+            if (array_key_exists('offerId', $value) == false) {
+                unset($this->objPrice[$key]);
+            }
+
+            if (array_key_exists('price', $value) == false) {
+                unset($this->objPrice[$key]);
+            }
+        }
+
+        $response = $this->service->updatePricesProducts($this->objPrice);
+
+        if ($response['data']['warnings'] == []) {
+            $this->printLog("sbermegamarket Обновлено цен -> " . $response['data']['savedPrices']);
+        }else{
+            Log::error("sbermegamarket ОШИБКА ОБНОВЛЕНИЯ !!! цен !!!");
+            Log::error(print_r($response, true));
+        }
+    }
+
+    public function updateStocksProducts(): void
+    {
+        foreach ($this->objQuantity as $key => $value) {
+            if (array_key_exists('offerId', $value) == false) {
+                unset($this->objQuantity[$key]);
+            }
+
+            if (array_key_exists('quantity', $value) == false) {
+                unset($this->objQuantity[$key]);
+            }
+        }
+
+        $response = $this->service->updateStocksProducts($this->objQuantity);
+
+        if ($response['error'] == []) {
+            $this->printLog("sbermegamarket Обновлено остатков");
+        }else{
+            Log::error("sbermegamarket ОШИБКА ОБНОВЛЕНИЯ !!! остатков !!!");
+            Log::error(print_r($response, true));
+        }
+    }
+
     /**
      * Execute the console command.
      *
@@ -54,15 +98,15 @@ class SbermegamarketAPI extends Command
 
         $this->printLog('Старт синхронизации sbermegamarket');
 
-        $service = SbermegamarketAPIService::getInstance();
-        $products = $service->getInfoProductsByMysql();
+        $this->service = SbermegamarketAPIService::getInstance();
+        $products = $this->service->getInfoProductsByMysql();
 
         $progressBar = $this->output->createProgressBar($products->count());
         $progressBar->start();
 
         foreach ($products as $product) {
-            $price = $service->getPriceProduct($product->id);
-            $quantity = $service->getQuantityProduct($product->id);
+            $price = $this->service->getPriceProduct($product->id);
+            $quantity = $this->service->getQuantityProduct($product->id);
 
             $this->objPrice[] = [
                 "offerId" => $product->sku,
@@ -76,53 +120,20 @@ class SbermegamarketAPI extends Command
             ];
 
             if (count($this->objPrice) == $this->countProductForRequest) {
-                foreach ($this->objPrice as $key => $value) {
-                    if (array_key_exists('offerId', $value) == false) {
-                        unset($this->objPrice[$key]);
-                    }
-
-                    if (array_key_exists('price', $value) == false) {
-                        unset($this->objPrice[$key]);
-                    }
-                }
-
-                $response = $service->updatePricesProducts($this->objPrice);
-
-                if ($response['data']['warnings'] == []) {
-                    $this->printLog("sbermegamarket Обновлено цен" . $response['data']['savedPrices']);
-                }else{
-                    Log::error("sbermegamarket ОШИБКА ОБНОВЛЕНИЯ !!! цен !!!");
-                    Log::error(print_r($response, true));
-                }
-
+                $this->updatePriceProducts();
                 $this->objPrice = [];
             }
 
-            /*if (count($this->objQuantity) == $this->countProductForRequest) {
-                foreach ($this->objQuantity as $key => $value) {
-                    if (array_key_exists('offerId', $value) == false) {
-                        unset($this->objQuantity[$key]);
-                    }
-
-                    if (array_key_exists('quantity', $value) == false) {
-                        unset($this->objQuantity[$key]);
-                    }
-                }
-
-                $response = $service->updateStocksProducts($this->objQuantity);
-
-                if ($response['error'] == []) {
-                    $this->printLog("sbermegamarket Обновлено остатков");
-                }else{
-                    Log::error("sbermegamarket ОШИБКА ОБНОВЛЕНИЯ !!! остатков !!!");
-                    Log::error(print_r($response, true));
-                }
-
+            if (count($this->objQuantity) == $this->countProductForRequest) {
+                //$this->updateStocksProducts();
                 $this->objQuantity = [];
-            }*/
+            }
 
             $progressBar->advance();
         }
+
+        $this->updatePriceProducts();
+        //$this->updateStocksProducts();
 
         $progressBar->finish();
 

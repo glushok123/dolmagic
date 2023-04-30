@@ -43,7 +43,7 @@ class SbermegamarketAPIService extends BaseModelService
             ->where('products.archive', 0)
            // ->where('products.id', 5543)
             ->leftJoin('shop_prices', 'products.id', '=', 'shop_prices.product_id')
-            ->limit(100)
+            //->limit(100)
             ->get();
 
         return  $infoProducts;
