@@ -631,7 +631,7 @@ class Insales extends Model
     public static function updateProducts($products = false)
     {
         $InsalesApi = (new InsalesApi());
-
+        
         if(!$products)
         {
             $products = Products::getRecentlyUpdatedProduct($InsalesApi->shopId);
