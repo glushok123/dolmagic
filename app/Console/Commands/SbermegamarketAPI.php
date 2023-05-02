@@ -90,9 +90,7 @@ class SbermegamarketAPI extends Command
 
         $response = $this->service->updateStocksProducts($this->objQuantity);
 
-        if ($response['error'] == []) {
-            $this->printLog("sbermegamarket Обновлено остатков");
-        }else{
+        if (array_key_exists('error', $response)) {
             Log::error("sbermegamarket ОШИБКА ОБНОВЛЕНИЯ !!! остатков !!!");
             Log::error(print_r($response, true));
         }
@@ -137,7 +135,7 @@ class SbermegamarketAPI extends Command
             }
 
             if (count($this->objQuantity) == $this->countProductForRequest) {
-                //$this->updateStocksProducts();
+                $this->updateStocksProducts();
                 $this->objQuantity = [];
             }
 
@@ -145,7 +143,7 @@ class SbermegamarketAPI extends Command
         }
 
         $this->updatePriceProducts();
-        //$this->updateStocksProducts();
+        $this->updateStocksProducts();
 
         $progressBar->finish();
 
