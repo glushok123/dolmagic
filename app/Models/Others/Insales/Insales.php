@@ -11,6 +11,7 @@ use App\Models\Model;
 use App\Models\Prices\Price;
 use App\Models\Products;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 
 class Insales extends Model
@@ -650,6 +651,7 @@ class Insales extends Model
                 $updated++;
             }
 
+            Log::info('InsalesApi -> обновление товара -> ' . $Product->sku);
             dump("$key / $countProducts $Product->sku");
         }
 
